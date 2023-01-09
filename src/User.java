@@ -6,6 +6,16 @@ public abstract class User {
     private String email;
     private String address;
 
+    public User(String username, String password, String fullname, String phone, String email,
+                String address) {
+        this.username = username;
+        this.password = password;
+        this.fullname = fullname;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+    }
+
     // getter
     public String getUsername() {
         return username;
@@ -57,7 +67,7 @@ public abstract class User {
     }
 
     // abstract methods
-    public abstract boolean login();
+     public abstract boolean signout();
 
 
 }
