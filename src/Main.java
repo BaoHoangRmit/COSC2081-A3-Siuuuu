@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        SystemFile.currentUsername = null;
+        SystemFile.setCurrentUsername(null);
         ArrayList<Customer> customers = SystemFile.viewCustomerList();
         ArrayList<String> customerIDs = SystemFile.viewCustomerIDList();
         HashMap<String, String> accounts = SystemFile.viewCustomerAccountList();
@@ -42,18 +42,36 @@ public class Main {
         System.out.println("--------------------------");
         System.out.println();
 
-        boolean hasRun = false;
-        do {
-            if (!hasRun) {
-                System.out.println("Login into the system!");
-                hasRun = true;
-            }
+
+
+//        System.out.println("The current username is: " + SystemFile.getCurrentUsername());
+//        Customer currentCustomer = SystemFile.viewCustomerByUsername(SystemFile.getCurrentUsername());
+//        if (currentCustomer != null) {
+//            System.out.println(currentCustomer.toString());
+//        } else {
+//            System.out.println("You are not logged in yet!");
+//        }
 
 
 
-        } while (!SystemFile.login());
+        System.out.println("----- WELCOME SCREEN -----");
+        System.out.println("COSC2081 GROUP ASSIGNMENT\n" +
+                "STORE ORDER MANAGEMENT SYSTEM\n" +
+                "Instructor: Mr. Tom Huynh & Dr. Phong Ngo\n" +
+                "Group: Siuuuu\n" +
+                "s3926050, Hoang Quoc Bao\n" +
+                "sXXXXXXX, Student Name\n" +
+                "sXXXXXXX, Student Name\n" +
+                "sXXXXXXX, Student Name");
+        System.out.println("----- WELCOME SCREEN -----");
 
-        System.out.println("The current username is: " + SystemFile.currentUsername);
+        System.out.println();
+
+        SystemFile.printLoginMenu();
+        SystemFile.checkLoginMenuInput();
+
+
+
 
     }
 }

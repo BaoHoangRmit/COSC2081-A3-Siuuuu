@@ -51,11 +51,15 @@ public class Customer extends User{
                 getCustomerID(), getSpending(), getMembership());
     }
 
-
-
-
     @Override
-    public boolean signout() {
-        return false;
+    public boolean logout() {
+        if (Objects.equals(SystemFile.getCurrentUsername(), null)) {
+            System.out.println("Logout unsuccessfully!");
+            return false;
+        } else {
+            SystemFile.setCurrentUsername(null);
+            System.out.println("Logout successfully!");
+            return true;
+        }
     }
 }

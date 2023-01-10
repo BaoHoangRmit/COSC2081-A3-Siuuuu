@@ -4,8 +4,150 @@ import java.io.IOException;
 import java.util.*;
 
 public class SystemFile {
-    static String currentUsername;
+    private static String currentUsername;
 
+    // getter setter
+    public static void setCurrentUsername(String currentUsername) {
+        SystemFile.currentUsername = currentUsername;
+    }
+
+    public static String getCurrentUsername() {
+        return currentUsername;
+    }
+
+
+    public static void printLoginMenu() {
+        System.out.println("----- MENU SCREEN -----");
+        System.out.println("1: Login");
+        System.out.println("2: Exit Application");
+        System.out.println("Enter your number option: ");
+    }
+
+    public static void checkLoginMenuInput() {
+        boolean hasRun = false;
+        logInLoop: do {
+            if (hasRun) {
+                System.out.println("Enter your number option again: ");
+            }
+
+            try {
+                Scanner scanner = new Scanner(System.in);
+                int inputOption = scanner.nextInt();
+                switch (inputOption) {
+                    case 1:
+                        if (login()) {
+                            printLoggedInMenu();
+                            checkLoggedInMenuInput();
+                            continue logInLoop;
+                        } else {
+                            printLoginMenu();
+                            hasRun = false;
+                            continue logInLoop;
+                        }
+                    case 2:
+                        System.exit(0);
+                        break;
+                    default:
+                        System.out.println("Please enter one of the given number!");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid input!");
+            }
+
+            hasRun = true;
+        } while (Objects.equals(SystemFile.getCurrentUsername(), null));
+    }
+
+    public static void printLoggedInMenu() {
+        System.out.println("----- CUSTOMER SCREEN -----");
+        System.out.println("1: View personal information");
+        System.out.println("2: Logout");
+        System.out.println("Enter your number option: ");
+    }
+
+    public static void checkLoggedInMenuInput() {
+        Customer currentCustomer = SystemFile.viewCurrentCustomer();
+        boolean hasRun1 = false;
+        loggedInLoop: do {
+            if (hasRun1) {
+                System.out.println("Enter your number option again: ");
+            }
+
+            try {
+                Scanner scanner = new Scanner(System.in);
+                int inputOption = scanner.nextInt();
+                switch (inputOption) {
+                    case 1:
+                        printCurrentCustomer(currentCustomer);
+                        printLoggedInMenu();
+                        hasRun1 = false;
+                        continue loggedInLoop;
+                    case 2:
+                        if (currentCustomer != null) {
+                            currentCustomer.logout();
+                        } else {
+                            System.out.println("You are not logged in yet!");
+                        }
+                        printLoginMenu();
+                        break loggedInLoop;
+                    default:
+                        System.out.println("Please enter one of the given number!");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid input!");
+            }
+
+            hasRun1 = true;
+        } while (Objects.equals(SystemFile.getCurrentUsername(), currentCustomer.getUsername()));
+    }
+
+    // menu function
+    static boolean login() {
+        HashMap<String, String> accounts = SystemFile.viewCustomerAccountList();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter username: ");
+        String inputUsername = scanner.nextLine();
+        System.out.println("Enter password: ");
+        String inputPassword = scanner.nextLine();
+
+        if (accounts != null) {
+            for (String s : accounts.keySet()) {
+                if (Objects.equals(inputUsername, s)) {
+                    if (Objects.equals(inputPassword, accounts.get(s))) {
+                        System.out.println("Login successfully!");
+                        setCurrentUsername(s);
+                        return true;
+                    } else {
+                        System.out.println("Wrong password!");
+                        System.out.println("Login again!");
+                        return false;
+                    }
+                } else {
+                    continue;
+                }
+            }
+
+            System.out.println("There are no account with the username you entered!");
+            System.out.println("Login again!");
+            return false;
+        } else {
+            System.out.println("There are no accounts in the DB");
+            return false;
+        }
+
+
+    }
+
+    public static void printCurrentCustomer(Customer currentCustomer) {
+        if (currentCustomer != null) {
+            System.out.println(currentCustomer.toString());
+        } else {
+            System.out.println("You are not logged in yet!");
+        }
+    }
+
+    // technical function
     static ArrayList<Customer> viewCustomerList() {
         try {
             Scanner fileScanner = new Scanner((new File("customersSiuuuu.txt")));
@@ -117,40 +259,11 @@ public class SystemFile {
         return null;
     }
 
-    static boolean login() {
-        HashMap<String, String> accounts = SystemFile.viewCustomerAccountList();
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Enter username: ");
-        String inputUsername = scanner.nextLine();
-        System.out.println("Enter password: ");
-        String inputPassword = scanner.nextLine();
-
-        if (accounts != null) {
-            for (String s : accounts.keySet()) {
-                if (Objects.equals(inputUsername, s)) {
-                    if (Objects.equals(inputPassword, accounts.get(s))) {
-                        System.out.println("Login successfully!");
-                        SystemFile.currentUsername = s;
-                        return true;
-                    } else {
-                        System.out.println("Wrong password!");
-                        System.out.println("Login again!");
-                        return false;
-                    }
-                } else {
-                    continue;
-                }
-            }
-
-            System.out.println("There are no account with the username you entered!");
-            System.out.println("Login again!");
-            return false;
+    static Customer viewCurrentCustomer() {
+        if (getCurrentUsername() != null) {
+            return viewCustomerByUsername(getCurrentUsername());
         } else {
-            System.out.println("There are no accounts in the DB");
-            return false;
+            return null;
         }
-
-
     }
 }
