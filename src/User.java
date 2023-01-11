@@ -67,7 +67,7 @@ public abstract class User {
     }
 
     // abstract methods
-     public abstract boolean signout();
+     public abstract boolean logout();
 
 
 }
