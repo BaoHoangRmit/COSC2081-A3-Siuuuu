@@ -1,0 +1,4 @@
+#ProductId,Name,Price,Desc,Cat,CatId
+P1,Dell,10.00,This is a Laptop,0,elec,C1
+P2,Dell2,12.00,This is a Laptop,0,elec,C1
+P3,Dell3,16.00,This is a Laptop,0,elec,C1

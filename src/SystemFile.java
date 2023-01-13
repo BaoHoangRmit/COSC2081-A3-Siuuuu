@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class SystemFile {
@@ -62,6 +63,7 @@ public class SystemFile {
         System.out.println("----- CUSTOMER SCREEN -----");
         System.out.println("1: View personal information");
         System.out.println("2: Logout");
+        System.out.println("3: Add Item");
         System.out.println("Enter your number option: ");
     }
 
@@ -89,6 +91,13 @@ public class SystemFile {
                             System.out.println("You are not logged in yet!");
                         }
                         printLoginMenu();
+                        break loggedInLoop;
+                    case 3:
+                        if(currentCustomer != null){
+                            currentCustomer.addItem();
+                        }else{
+                            System.out.println("You are not logged in yet!");
+                        }
                         break loggedInLoop;
                     default:
                         System.out.println("Please enter one of the given number!");
@@ -265,5 +274,82 @@ public class SystemFile {
         } else {
             return null;
         }
+    }
+
+    static ArrayList<Product> viewProductList() {
+        try {
+            Scanner fileScanner = new Scanner((new File("product.txt")));
+            ArrayList<Product> productsList = new ArrayList<Product>();
+
+            fileScanner.nextLine();
+
+            while (fileScanner.hasNext()) {
+                String line = fileScanner.nextLine();
+                StringTokenizer inReader = new StringTokenizer(line, ",");
+
+                if (inReader.countTokens() != 7) {
+                    throw new IOException("Invalid Input Format (product)");
+                } else {
+                    // get each string seperated by ","
+                    String productId = inReader.nextToken();
+                    String productName = inReader.nextToken();
+                    double productPrice = Double.parseDouble(inReader.nextToken());
+                    String productDesc = inReader.nextToken();
+                    int productSaleNumber = Integer.parseInt(inReader.nextToken());
+                    String productCategoryName = inReader.nextToken();
+                    String productCategoryId = inReader.nextToken();
+
+                    // add customers from txt into list
+                    productsList.add(new Product(productId, productName, productPrice, productDesc, productSaleNumber, productCategoryId, productCategoryName));
+                }
+            }
+
+            fileScanner.close();
+
+            return productsList;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    static ArrayList<Bag> viewBagsList() {
+        try {
+            Scanner fileScanner = new Scanner((new File("bag.txt")));
+            ArrayList<Bag> bagsList = new ArrayList<Bag>();
+
+            fileScanner.nextLine();
+
+            while (fileScanner.hasNext()) {
+                String line = fileScanner.nextLine();
+                StringTokenizer inReader = new StringTokenizer(line, ",");
+
+                if (inReader.countTokens() != 4) {
+                    throw new IOException("Invalid Input Format (bag)");
+                } else {
+                    // get each string seperated by ","
+
+                    String customerId = inReader.nextToken();
+                    String productId = inReader.nextToken();
+                    int productAmount = Integer.parseInt(inReader.nextToken());
+                    double productPrice = Double.parseDouble(inReader.nextToken());
+
+                    bagsList.add(new Bag(customerId, productId, productAmount, productPrice));
+                }
+            }
+
+            fileScanner.close();
+
+            return bagsList;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }catch(NoSuchElementException e){
+            return null;
+        }
+        return null;
     }
 }
