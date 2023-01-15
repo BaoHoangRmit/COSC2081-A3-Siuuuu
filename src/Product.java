@@ -1,20 +1,11 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.StringTokenizer;
 
-public class Product extends Category{
+public class Product extends Category implements Comparable<Product>{
     private String productID;
     private String productName;
     private double productPrice;
     private String productDesc;
     private int saleNumber;
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     public Product() {
     }
@@ -70,7 +61,16 @@ public class Product extends Category{
 
     @Override
     public String toString() {
-//        return "ID: " + productID + ", Name: " + productName + ", Price: " +productPrice ;
         return String.format("%s, %s, %.2f, %s", getProductID(), getProductName(), getProductPrice(), getCategoryName());
+    }
+
+    @Override
+    public int compareTo(Product product) {
+        if (productPrice == product.productPrice)
+            return 0;
+        else if (productPrice > product.productPrice)
+            return 1;
+        else
+            return -1;
     }
 }
