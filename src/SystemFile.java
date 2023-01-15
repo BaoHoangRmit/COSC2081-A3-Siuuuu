@@ -1,6 +1,6 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class SystemFile {
@@ -16,6 +16,7 @@ public class SystemFile {
     }
 
 
+    // menu function
     public static void printLoginMenu() {
         System.out.println("----- MENU SCREEN -----");
         System.out.println("1: Login");
@@ -91,7 +92,7 @@ public class SystemFile {
                             printLoggedInMenu();
                             hasRun1 = false;
                             continue loggedInLoop;
-                        }else{
+                        } else{
                             System.out.println("You are not logged in yet!");
                             printLoggedInMenu();
                             break loggedInLoop;
@@ -116,7 +117,15 @@ public class SystemFile {
         } while (Objects.equals(SystemFile.getCurrentUsername(), currentCustomer.getUsername()));
     }
 
-    // menu function
+    public static void printCurrentCustomer(Customer currentCustomer) {
+        if (currentCustomer != null) {
+            System.out.println(currentCustomer.toString());
+        } else {
+            System.out.println("You are not logged in yet!");
+        }
+    }
+
+    // technical function
     static boolean login() {
         HashMap<String, String> accounts = SystemFile.viewCustomerAccountList();
         Scanner scanner = new Scanner(System.in);
@@ -150,19 +159,112 @@ public class SystemFile {
             System.out.println("There are no accounts in the DB");
             return false;
         }
-
-
     }
 
-    public static void printCurrentCustomer(Customer currentCustomer) {
-        if (currentCustomer != null) {
-            System.out.println(currentCustomer.toString());
-        } else {
-            System.out.println("You are not logged in yet!");
+    // cannot validate in while loop yet
+    // care for pointer in file
+    static void createCustomer() {
+        Scanner scanner = new Scanner(System.in);
+
+        String inputUsername = null;
+        boolean hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your new username: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your new username: ");
+            }
+
+            inputUsername = scanner.nextLine();
+        } while (Objects.equals(inputUsername, null));
+
+        String inputPassword = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your new password: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your new password: ");
+            }
+
+            inputPassword = scanner.nextLine();
+        } while (Objects.equals(inputPassword, null));
+
+        String inputFullName = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your full name: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your full name: ");
+            }
+
+            inputFullName = scanner.nextLine();
+        } while (Objects.equals(inputFullName, null));
+
+        String inputPhone = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your phone number: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your phone number: ");
+            }
+
+            inputPhone = scanner.nextLine();
+        } while (Objects.equals(inputPhone, null));
+
+        String inputEmail = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your email address: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your email address: ");
+            }
+
+            inputEmail = scanner.nextLine();
+        } while (Objects.equals(inputEmail, null));
+
+        String inputAddress = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your address: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your address: ");
+            }
+
+            inputAddress = scanner.nextLine();
+        } while (Objects.equals(inputAddress, null));
+
+        Customer newCustomer = new Customer(inputUsername.trim(), inputPassword.trim(),
+                inputFullName.trim(), inputPhone.trim(), inputEmail.trim(), inputAddress.trim());
+
+        // append new Customer to file
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter("customersSiuuuu.txt", true ));
+            pw.println(String.format("%s,%s,%s,%s,%s,%s,%s,%.2f,%s", newCustomer.getCustomerID(), newCustomer.getUsername(), newCustomer.getPassword(),
+                    newCustomer.getFullname(), newCustomer.getPhone(), newCustomer.getEmail(), newCustomer.getAddress(),
+                    newCustomer.getSpending(), newCustomer.getMembership()));
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("Cannot create a new account!");
         }
     }
 
-    // technical function
     static ArrayList<Customer> viewCustomerList() {
         try {
             Scanner fileScanner = new Scanner((new File("customersSiuuuu.txt")));
