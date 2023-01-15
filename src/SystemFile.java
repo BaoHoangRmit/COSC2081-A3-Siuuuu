@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class SystemFile {
@@ -60,10 +59,11 @@ public class SystemFile {
     }
 
     public static void printLoggedInMenu() {
+        System.out.print("\n");
         System.out.println("----- CUSTOMER SCREEN -----");
         System.out.println("1: View personal information");
-        System.out.println("2: Logout");
-        System.out.println("3: Add Item");
+        System.out.println("2: Add Item");
+        System.out.println("3: Logout");
         System.out.println("Enter your number option: ");
     }
 
@@ -84,20 +84,26 @@ public class SystemFile {
                         printLoggedInMenu();
                         hasRun1 = false;
                         continue loggedInLoop;
+
                     case 2:
+                        if(currentCustomer != null){
+                            currentCustomer.addItem();
+                            printLoggedInMenu();
+                            hasRun1 = false;
+                            continue loggedInLoop;
+                        }else{
+                            System.out.println("You are not logged in yet!");
+                            printLoggedInMenu();
+                            break loggedInLoop;
+                        }
+
+                    case 3:
                         if (currentCustomer != null) {
                             currentCustomer.logout();
                         } else {
                             System.out.println("You are not logged in yet!");
                         }
                         printLoginMenu();
-                        break loggedInLoop;
-                    case 3:
-                        if(currentCustomer != null){
-                            currentCustomer.addItem();
-                        }else{
-                            System.out.println("You are not logged in yet!");
-                        }
                         break loggedInLoop;
                     default:
                         System.out.println("Please enter one of the given number!");

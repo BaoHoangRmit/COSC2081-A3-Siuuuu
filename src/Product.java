@@ -73,42 +73,4 @@ public class Product extends Category{
 //        return "ID: " + productID + ", Name: " + productName + ", Price: " +productPrice ;
         return String.format("%s, %s, %.2f, %s", getProductID(), getProductName(), getProductPrice(), getCategoryName());
     }
-
-    static ArrayList<Product> viewProductList() {
-        try {
-            Scanner fileScanner = new Scanner((new File("src/product.txt")));
-            ArrayList<Product> productList = new ArrayList<Product>();
-            String line;
-
-            while (fileScanner.hasNext()){
-                line = fileScanner.nextLine();
-                StringTokenizer inReader = new StringTokenizer(line, ",");
-
-                if (inReader.countTokens() != 7) {
-                    throw new IOException("Invalid Input Format");
-                } else {
-                    String fileProductID = inReader.nextToken();
-                    String fileProductName = inReader.nextToken();
-                    double fileProductPrice = Double.parseDouble(inReader.nextToken());
-                    String fileProductDesc = inReader.nextToken();
-                    int fileProductSales = Integer.parseInt(inReader.nextToken());
-                    String fileCategoryID = inReader.nextToken();
-                    String fileCategoryName = inReader.nextToken();
-
-                    productList.add(new Product(fileProductID, fileProductName, fileProductPrice, fileProductDesc, fileProductSales, fileCategoryID, fileCategoryName));
-                }
-            }
-
-            fileScanner.close();
-
-            return productList;
-
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
 }

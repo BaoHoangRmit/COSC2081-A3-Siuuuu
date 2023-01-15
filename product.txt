@@ -1,4 +1,3 @@
-#ProductId,Name,Price,Desc,Cat,CatId
-P1,Dell,10.00,This is a Laptop,0,elec,C1
-P2,Dell2,12.00,This is a Laptop,0,elec,C1
-P3,Dell3,16.00,This is a Laptop,0,elec,C1
+#productId,productName,Price,ProductDesc,ProductSaleNumber,CatId,CatName
+1111,Macbook1,9.99,This is cheap,20,1,Laptop
+1112,iPhone2,19.99,This is expensive,30,2,Smartphone

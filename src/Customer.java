@@ -8,10 +8,10 @@ public class Customer extends User{
     private double spending;
     private String membership;
 
-    public Customer(String username, String password, String fullname, String phone,
+    public Customer(String username, String password, String fullName, String phone,
                     String email, String address, String customerID, double spending,
                     String membership) {
-        super(username, password, fullname, phone, email, address);
+        super(username, password, fullName, phone, email, address);
         this.customerID = customerID;
         this.spending = spending;
         this.membership = membership;
@@ -51,7 +51,7 @@ public class Customer extends User{
     }
 
     public void addItem(){
-        String productInfo, productId = "", productName;
+        String productInfo, productId = "", productName = "";
         String userInputString;
         double productPrice = 0;
         boolean addItemRun = true;
@@ -60,12 +60,11 @@ public class Customer extends User{
         ArrayList<Product> productsList = SystemFile.viewProductList();
         ArrayList<Bag> bagsList = SystemFile.viewBagsList();
 
-        Scanner fileScanner = null;
-
-        System.out.println("Add Item(s)");
+        System.out.print("\n");
+        System.out.println("----- Add Items(s) -----");
         do{
             Scanner inputScanner = new Scanner(System.in);
-            System.out.println("Enter ProductID/ ProductName:");
+            System.out.print("Enter ProductID/ ProductName: ");
             try{
                 productInfo = inputScanner.nextLine();
                 productInfo = productInfo.trim();
@@ -89,12 +88,12 @@ public class Customer extends User{
 
             if(checkProduct){
                 try{
-                    System.out.println(productId);
-                    System.out.println("Do you want to add this item ?[y/n]");
+                    System.out.println("Item Found: " + productName + ", Price: " + productPrice);
+                    System.out.print("Do you want to add this item [y/n]: ");
                     userInputString = inputScanner.nextLine();
 
                     if(userInputString.equalsIgnoreCase("y")){
-                        System.out.println("Enter amount: ");
+                        System.out.print("Enter amount: ");
                         int userInputInt = inputScanner.nextInt();
                         inputScanner.nextLine();
 
@@ -111,7 +110,6 @@ public class Customer extends User{
 
                             if(!checkBag){
                                 bagsList.add(new Bag(customerID, productId, userInputInt, userInputInt * productPrice));
-                                checkBag = false;
                             }
                         }else{
                             bagsList = new ArrayList<>();
@@ -124,6 +122,10 @@ public class Customer extends User{
                             pw.println(String.format("%s,%s,%d,%.2f", getCustomerID(), bag.getProductID(), bag.getProductAmount(), bag.getProductPrice()));
                         }
                         pw.close();
+                    }else if(userInputString.equalsIgnoreCase("n")){
+                        System.out.println("Processing...");
+                    }else{
+                        System.out.println("Hmm! We will consider this answer as a no.");
                     }
                 }catch (InputMismatchException e) {
                     System.out.println("Please enter a valid input!");
@@ -136,14 +138,17 @@ public class Customer extends User{
             }
 
             try{
-                System.out.println("Do you want to add more item ?[y/n]");
+                System.out.print("Do you want to add another item [y/n]: ");
                 userInputString = inputScanner.nextLine();
                 if(userInputString.equalsIgnoreCase("n")){
+                    System.out.println("Returning to Menu...");
                     addItemRun = false;
                 } else if (userInputString.equalsIgnoreCase("y")) {
                     System.out.println("Processing...");
                 }else{
                     System.out.println("Hmm! We will consider this answer as a no.");
+                    System.out.println("Returning to Menu...");
+                    addItemRun = false;
                 }
             }catch(InputMismatchException e){
                 System.out.println("Please enter a valid input!");
