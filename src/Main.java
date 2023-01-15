@@ -70,7 +70,7 @@ public class Main {
                 "Group: Siuuuu\n" +
                 "s3926050, Hoang Quoc Bao\n" +
                 "s3938338, Nguyen Thien Co\n" +
-                "sXXXXXXX, Student Name\n" +
+                "s3927474, Hoang Vinh Khue\n" +
                 "sXXXXXXX, Student Name");
         System.out.println("----- WELCOME SCREEN -----");
 
