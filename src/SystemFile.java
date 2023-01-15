@@ -1,4 +1,6 @@
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class SystemFile {
@@ -14,6 +16,7 @@ public class SystemFile {
     }
 
 
+    // menu function
     public static void printLoginMenu() {
         System.out.println("----- MENU SCREEN -----");
         System.out.println("1: Login");
@@ -34,8 +37,6 @@ public class SystemFile {
                 switch (inputOption) {
                     case 1:
                         if (login()) {
-                            System.out.print("\n");
-                            checkBag();
                             printLoggedInMenu();
                             checkLoggedInMenuInput();
                             continue logInLoop;
@@ -63,15 +64,8 @@ public class SystemFile {
         System.out.println("----- CUSTOMER SCREEN -----");
         System.out.println("1: View personal information");
         System.out.println("2: Add Item");
-        System.out.println("3: View Bag");
-        System.out.println("4: Edit Bag");
-        System.out.println("5: Confirm Bag");
-        System.out.println("6: View Bill(s)");
-        System.out.println("7: Pay Bill(s)");
-        System.out.println("8: Logout");
-        System.out.println("9: Quit application (your account will be logged out)");
-        System.out.print("\n");
-        System.out.print("Enter your number option: ");
+        System.out.println("3: Logout");
+        System.out.println("Enter your number option: ");
     }
 
     public static void checkLoggedInMenuInput() {
@@ -95,85 +89,16 @@ public class SystemFile {
                     case 2:
                         if(currentCustomer != null){
                             currentCustomer.addItem();
-                            System.out.println("Returning to Menu...");
                             printLoggedInMenu();
                             hasRun1 = false;
                             continue loggedInLoop;
-                        }else{
+                        } else{
                             System.out.println("You are not logged in yet!");
                             printLoggedInMenu();
                             break loggedInLoop;
                         }
 
                     case 3:
-                        if(currentCustomer != null){
-                            System.out.print("\n");
-                            System.out.println("----- Bag Content -----");
-                            BagUtils.viewBag();
-                            BagUtils.viewBagDetail();
-                            System.out.println("Returning to Menu...");
-                            printLoggedInMenu();
-                            hasRun1 = false;
-                            continue loggedInLoop;
-                        }else{
-                            System.out.println("You are not logged in yet!");
-                            printLoggedInMenu();
-                            break loggedInLoop;
-                        }
-
-                    case 4:
-                        if(currentCustomer != null){
-                            currentCustomer.editBag();
-                            System.out.println("Returning to Menu...");
-                            printLoggedInMenu();
-                            hasRun1 = false;
-                            continue loggedInLoop;
-                        }else{
-                            System.out.println("You are not logged in yet!");
-                            printLoggedInMenu();
-                            break loggedInLoop;
-                        }
-
-                    case 5:
-                        if(currentCustomer != null){
-                            OrderUtils.generateOrder();
-                            System.out.println("Returning to Menu...");
-                            printLoggedInMenu();
-                            hasRun1 = false;
-                            continue loggedInLoop;
-                        }else{
-                            System.out.println("You are not logged in yet!");
-                            printLoggedInMenu();
-                            break loggedInLoop;
-                        }
-
-                    case 6:
-                        if(currentCustomer != null){
-                            OrderUtils.viewOrder();
-                            System.out.println("Returning to Menu...");
-                            printLoggedInMenu();
-                            hasRun1 = false;
-                            continue loggedInLoop;
-                        }else{
-                            System.out.println("You are not logged in yet!");
-                            printLoggedInMenu();
-                            break loggedInLoop;
-                        }
-
-                    case 7:
-                        if(currentCustomer != null){
-                            OrderUtils.payBill();
-                            System.out.println("Returning to Menu...");
-                            printLoggedInMenu();
-                            hasRun1 = false;
-                            continue loggedInLoop;
-                        }else{
-                            System.out.println("You are not logged in yet!");
-                            printLoggedInMenu();
-                            break loggedInLoop;
-                        }
-
-                    case 8:
                         if (currentCustomer != null) {
                             currentCustomer.logout();
                         } else {
@@ -181,9 +106,6 @@ public class SystemFile {
                         }
                         printLoginMenu();
                         break loggedInLoop;
-
-                    case 9:
-                        System.exit(0);
                     default:
                         System.out.println("Please enter one of the given number!");
                 }
@@ -195,7 +117,15 @@ public class SystemFile {
         } while (Objects.equals(SystemFile.getCurrentUsername(), currentCustomer.getUsername()));
     }
 
-    // menu function
+    public static void printCurrentCustomer(Customer currentCustomer) {
+        if (currentCustomer != null) {
+            System.out.println(currentCustomer.toString());
+        } else {
+            System.out.println("You are not logged in yet!");
+        }
+    }
+
+    // technical function
     static boolean login() {
         HashMap<String, String> accounts = SystemFile.viewCustomerAccountList();
         Scanner scanner = new Scanner(System.in);
@@ -229,19 +159,112 @@ public class SystemFile {
             System.out.println("There are no accounts in the DB");
             return false;
         }
-
-
     }
 
-    public static void printCurrentCustomer(Customer currentCustomer) {
-        if (currentCustomer != null) {
-            System.out.println(currentCustomer.toString());
-        } else {
-            System.out.println("You are not logged in yet!");
+    // cannot validate in while loop yet
+    // care for pointer in file
+    static void createCustomer() {
+        Scanner scanner = new Scanner(System.in);
+
+        String inputUsername = null;
+        boolean hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your new username: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your new username: ");
+            }
+
+            inputUsername = scanner.nextLine();
+        } while (Objects.equals(inputUsername, null));
+
+        String inputPassword = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your new password: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your new password: ");
+            }
+
+            inputPassword = scanner.nextLine();
+        } while (Objects.equals(inputPassword, null));
+
+        String inputFullName = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your full name: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your full name: ");
+            }
+
+            inputFullName = scanner.nextLine();
+        } while (Objects.equals(inputFullName, null));
+
+        String inputPhone = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your phone number: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your phone number: ");
+            }
+
+            inputPhone = scanner.nextLine();
+        } while (Objects.equals(inputPhone, null));
+
+        String inputEmail = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your email address: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your email address: ");
+            }
+
+            inputEmail = scanner.nextLine();
+        } while (Objects.equals(inputEmail, null));
+
+        String inputAddress = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.println("Enter your address: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your address: ");
+            }
+
+            inputAddress = scanner.nextLine();
+        } while (Objects.equals(inputAddress, null));
+
+        Customer newCustomer = new Customer(inputUsername.trim(), inputPassword.trim(),
+                inputFullName.trim(), inputPhone.trim(), inputEmail.trim(), inputAddress.trim());
+
+        // append new Customer to file
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter("customersSiuuuu.txt", true ));
+            pw.println(String.format("%s,%s,%s,%s,%s,%s,%s,%.2f,%s", newCustomer.getCustomerID(), newCustomer.getUsername(), newCustomer.getPassword(),
+                    newCustomer.getFullname(), newCustomer.getPhone(), newCustomer.getEmail(), newCustomer.getAddress(),
+                    newCustomer.getSpending(), newCustomer.getMembership()));
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("Cannot create a new account!");
         }
     }
 
-    // technical function
     static ArrayList<Customer> viewCustomerList() {
         try {
             Scanner fileScanner = new Scanner((new File("customersSiuuuu.txt")));
@@ -411,18 +434,17 @@ public class SystemFile {
                 String line = fileScanner.nextLine();
                 StringTokenizer inReader = new StringTokenizer(line, ",");
 
-                if (inReader.countTokens() != 5) {
+                if (inReader.countTokens() != 4) {
                     throw new IOException("Invalid Input Format (bag)");
                 } else {
                     // get each string seperated by ","
 
                     String customerId = inReader.nextToken();
                     String productId = inReader.nextToken();
-                    String productName = inReader.nextToken();
                     int productAmount = Integer.parseInt(inReader.nextToken());
                     double productPrice = Double.parseDouble(inReader.nextToken());
 
-                    bagsList.add(new Bag(customerId, productId, productName, productAmount, productPrice));
+                    bagsList.add(new Bag(customerId, productId, productAmount, productPrice));
                 }
             }
 
@@ -430,76 +452,12 @@ public class SystemFile {
 
             return bagsList;
         } catch (FileNotFoundException e) {
-            System.out.println("File not found (bag)");
+            System.out.println("File not found");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }catch(NoSuchElementException e){
             return null;
         }
         return null;
-    }
-
-    static void updateBag(ArrayList<Bag> bagsList){
-        try {
-            PrintWriter pw = new PrintWriter(new FileWriter("bag.txt", false));
-            pw.println("#customerID,ProductID,ProductName,Amount,Price");
-            for(Bag bag : bagsList){
-                pw.println(String.format("%s,%s,%s,%d,%.2f", bag.getCustomerID(), bag.getProductID(), bag.getProductName(), bag.getProductAmount(), bag.getProductPrice()));
-            }
-            pw.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred (updateBag)!");
-        }
-    }
-
-    static void checkBag(){
-        ArrayList<Bag> bagsList = viewBagsList();
-        ArrayList<Bag> bagChangesList = new ArrayList<Bag>();
-        ArrayList<Product> productsList = viewProductList();
-        Customer currentCustomer = viewCurrentCustomer();
-
-        boolean checkBaginProduct;
-        int changeCnt = 0;
-        if(currentCustomer != null){
-            if (bagsList != null) {
-                for(Bag cart : bagsList){
-                    checkBaginProduct = true;
-                    if (productsList != null) {
-                        for(Product item : productsList){
-                            if ( ( (cart.getProductID()).equalsIgnoreCase( (item.getProductID()) ) ) ) {
-                                checkBaginProduct = false;
-                                break;
-                            }
-                        }
-                        if( ( (cart.getCustomerID()).equalsIgnoreCase( (currentCustomer.getCustomerID()) ) ) && checkBaginProduct ){
-                            changeCnt += 1;
-                            bagChangesList.add(cart);
-                        }
-                    }else{
-                        for(Bag cart2 : bagsList){
-                            if( (cart2.getCustomerID()).equalsIgnoreCase( (currentCustomer.getCustomerID()) ) ){
-                                changeCnt += 1;
-                                bagChangesList.add(cart2);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if(changeCnt > 0){
-            System.out.println("----- Welcome Back -----");
-            System.out.print("\n");
-            System.out.println("----- Bag Update -----");
-            System.out.println("Some items have been removed by either application administrator or product owner.");
-            System.out.println(changeCnt + " item(s) will be removed from your Bag:");
-
-            for(Bag cart : bagChangesList){
-                System.out.println(cart);
-                bagsList.remove(cart);
-            }
-
-            updateBag(bagsList);
-        }
     }
 }

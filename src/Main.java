@@ -52,7 +52,16 @@ public class Main {
 //            System.out.println("You are not logged in yet!");
 //        }
 
-
+//        System.out.println("Creating new Customer -------");
+//        SystemFile.createCustomer();
+//        customers = SystemFile.viewCustomerList();
+//        if (customers != null) {
+//            for (Customer customer : customers) {
+//                System.out.println(customer.toString());
+//            }
+//        } else {
+//            System.out.println("There are no customers data");
+//        }
 
         System.out.println("----- WELCOME SCREEN -----");
         System.out.println("COSC2081 GROUP ASSIGNMENT\n" +
@@ -61,7 +70,7 @@ public class Main {
                 "Group: Siuuuu\n" +
                 "s3926050, Hoang Quoc Bao\n" +
                 "s3938338, Nguyen Thien Co\n" +
-                "sXXXXXXX, Student Name\n" +
+                "s3927474, Hoang Vinh Khue\n" +
                 "sXXXXXXX, Student Name");
         System.out.println("----- WELCOME SCREEN -----");
 
