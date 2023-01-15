@@ -1,9 +1,9 @@
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+
+    public static void main(String[] args) {
         SystemFile.setCurrentUsername(null);
         ArrayList<Customer> customers = SystemFile.viewCustomerList();
         ArrayList<String> customerIDs = SystemFile.viewCustomerIDList();
@@ -60,7 +60,7 @@ public class Main {
                 "Instructor: Mr. Tom Huynh & Dr. Phong Ngo\n" +
                 "Group: Siuuuu\n" +
                 "s3926050, Hoang Quoc Bao\n" +
-                "sXXXXXXX, Student Name\n" +
+                "s3938338, Nguyen Thien Co\n" +
                 "sXXXXXXX, Student Name\n" +
                 "sXXXXXXX, Student Name");
         System.out.println("----- WELCOME SCREEN -----");

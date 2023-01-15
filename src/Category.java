@@ -41,7 +41,7 @@ public class Category {
 
     static ArrayList<Category> viewCategoryList() {
         try {
-            Scanner fileScanner = new Scanner((new File("src/category.txt")));
+            Scanner fileScanner = new Scanner((new File("category.txt")));
             ArrayList<Category> categoryList = new ArrayList<Category>();
             String line;
 
