@@ -64,6 +64,7 @@ public class SystemFile {
         System.out.println("1: View personal information");
         System.out.println("2: Add Item");
         System.out.println("3: Logout");
+        System.out.println("4: Quit application (your account will be logged out)");
         System.out.println("Enter your number option: ");
     }
 
@@ -105,6 +106,9 @@ public class SystemFile {
                         }
                         printLoginMenu();
                         break loggedInLoop;
+
+                    case 4:
+                        System.exit(0);
                     default:
                         System.out.println("Please enter one of the given number!");
                 }
