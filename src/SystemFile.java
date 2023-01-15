@@ -1,6 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class SystemFile {
@@ -36,6 +34,8 @@ public class SystemFile {
                 switch (inputOption) {
                     case 1:
                         if (login()) {
+                            System.out.print("\n");
+                            checkBag();
                             printLoggedInMenu();
                             checkLoggedInMenuInput();
                             continue logInLoop;
@@ -63,9 +63,15 @@ public class SystemFile {
         System.out.println("----- CUSTOMER SCREEN -----");
         System.out.println("1: View personal information");
         System.out.println("2: Add Item");
-        System.out.println("3: Logout");
-        System.out.println("4: Quit application (your account will be logged out)");
-        System.out.println("Enter your number option: ");
+        System.out.println("3: View Bag");
+        System.out.println("4: Edit Bag");
+        System.out.println("5: Confirm Bag");
+        System.out.println("6: View Bill(s)");
+        System.out.println("7: Pay Bill(s)");
+        System.out.println("8: Logout");
+        System.out.println("9: Quit application (your account will be logged out)");
+        System.out.print("\n");
+        System.out.print("Enter your number option: ");
     }
 
     public static void checkLoggedInMenuInput() {
@@ -89,6 +95,7 @@ public class SystemFile {
                     case 2:
                         if(currentCustomer != null){
                             currentCustomer.addItem();
+                            System.out.println("Returning to Menu...");
                             printLoggedInMenu();
                             hasRun1 = false;
                             continue loggedInLoop;
@@ -99,6 +106,74 @@ public class SystemFile {
                         }
 
                     case 3:
+                        if(currentCustomer != null){
+                            System.out.print("\n");
+                            System.out.println("----- Bag Content -----");
+                            BagUtils.viewBag();
+                            BagUtils.viewBagDetail();
+                            System.out.println("Returning to Menu...");
+                            printLoggedInMenu();
+                            hasRun1 = false;
+                            continue loggedInLoop;
+                        }else{
+                            System.out.println("You are not logged in yet!");
+                            printLoggedInMenu();
+                            break loggedInLoop;
+                        }
+
+                    case 4:
+                        if(currentCustomer != null){
+                            currentCustomer.editBag();
+                            System.out.println("Returning to Menu...");
+                            printLoggedInMenu();
+                            hasRun1 = false;
+                            continue loggedInLoop;
+                        }else{
+                            System.out.println("You are not logged in yet!");
+                            printLoggedInMenu();
+                            break loggedInLoop;
+                        }
+
+                    case 5:
+                        if(currentCustomer != null){
+                            OrderUtils.generateOrder();
+                            System.out.println("Returning to Menu...");
+                            printLoggedInMenu();
+                            hasRun1 = false;
+                            continue loggedInLoop;
+                        }else{
+                            System.out.println("You are not logged in yet!");
+                            printLoggedInMenu();
+                            break loggedInLoop;
+                        }
+
+                    case 6:
+                        if(currentCustomer != null){
+                            OrderUtils.viewOrder();
+                            System.out.println("Returning to Menu...");
+                            printLoggedInMenu();
+                            hasRun1 = false;
+                            continue loggedInLoop;
+                        }else{
+                            System.out.println("You are not logged in yet!");
+                            printLoggedInMenu();
+                            break loggedInLoop;
+                        }
+
+                    case 7:
+                        if(currentCustomer != null){
+                            OrderUtils.payBill();
+                            System.out.println("Returning to Menu...");
+                            printLoggedInMenu();
+                            hasRun1 = false;
+                            continue loggedInLoop;
+                        }else{
+                            System.out.println("You are not logged in yet!");
+                            printLoggedInMenu();
+                            break loggedInLoop;
+                        }
+
+                    case 8:
                         if (currentCustomer != null) {
                             currentCustomer.logout();
                         } else {
@@ -107,7 +182,7 @@ public class SystemFile {
                         printLoginMenu();
                         break loggedInLoop;
 
-                    case 4:
+                    case 9:
                         System.exit(0);
                     default:
                         System.out.println("Please enter one of the given number!");
@@ -336,17 +411,18 @@ public class SystemFile {
                 String line = fileScanner.nextLine();
                 StringTokenizer inReader = new StringTokenizer(line, ",");
 
-                if (inReader.countTokens() != 4) {
+                if (inReader.countTokens() != 5) {
                     throw new IOException("Invalid Input Format (bag)");
                 } else {
                     // get each string seperated by ","
 
                     String customerId = inReader.nextToken();
                     String productId = inReader.nextToken();
+                    String productName = inReader.nextToken();
                     int productAmount = Integer.parseInt(inReader.nextToken());
                     double productPrice = Double.parseDouble(inReader.nextToken());
 
-                    bagsList.add(new Bag(customerId, productId, productAmount, productPrice));
+                    bagsList.add(new Bag(customerId, productId, productName, productAmount, productPrice));
                 }
             }
 
@@ -354,12 +430,76 @@ public class SystemFile {
 
             return bagsList;
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            System.out.println("File not found (bag)");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }catch(NoSuchElementException e){
             return null;
         }
         return null;
+    }
+
+    static void updateBag(ArrayList<Bag> bagsList){
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter("bag.txt", false));
+            pw.println("#customerID,ProductID,ProductName,Amount,Price");
+            for(Bag bag : bagsList){
+                pw.println(String.format("%s,%s,%s,%d,%.2f", bag.getCustomerID(), bag.getProductID(), bag.getProductName(), bag.getProductAmount(), bag.getProductPrice()));
+            }
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred (updateBag)!");
+        }
+    }
+
+    static void checkBag(){
+        ArrayList<Bag> bagsList = viewBagsList();
+        ArrayList<Bag> bagChangesList = new ArrayList<Bag>();
+        ArrayList<Product> productsList = viewProductList();
+        Customer currentCustomer = viewCurrentCustomer();
+
+        boolean checkBaginProduct;
+        int changeCnt = 0;
+        if(currentCustomer != null){
+            if (bagsList != null) {
+                for(Bag cart : bagsList){
+                    checkBaginProduct = true;
+                    if (productsList != null) {
+                        for(Product item : productsList){
+                            if ( ( (cart.getProductID()).equalsIgnoreCase( (item.getProductID()) ) ) ) {
+                                checkBaginProduct = false;
+                                break;
+                            }
+                        }
+                        if( ( (cart.getCustomerID()).equalsIgnoreCase( (currentCustomer.getCustomerID()) ) ) && checkBaginProduct ){
+                            changeCnt += 1;
+                            bagChangesList.add(cart);
+                        }
+                    }else{
+                        for(Bag cart2 : bagsList){
+                            if( (cart2.getCustomerID()).equalsIgnoreCase( (currentCustomer.getCustomerID()) ) ){
+                                changeCnt += 1;
+                                bagChangesList.add(cart2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if(changeCnt > 0){
+            System.out.println("----- Welcome Back -----");
+            System.out.print("\n");
+            System.out.println("----- Bag Update -----");
+            System.out.println("Some items have been removed by either application administrator or product owner.");
+            System.out.println(changeCnt + " item(s) will be removed from your Bag:");
+
+            for(Bag cart : bagChangesList){
+                System.out.println(cart);
+                bagsList.remove(cart);
+            }
+
+            updateBag(bagsList);
+        }
     }
 }
