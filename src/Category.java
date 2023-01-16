@@ -36,7 +36,7 @@ public class Category {
 
     @Override
     public String toString() {
-        return "Category ID = " + categoryID + ", Name = " + categoryName;
+        return String.format("%s | %s", categoryID,categoryName);
     }
     
 }
