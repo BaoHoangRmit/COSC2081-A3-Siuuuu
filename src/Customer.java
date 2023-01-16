@@ -54,14 +54,24 @@ public class Customer extends User{
 
     @Override
     public String toString() {
-        return String.format("%s, %s, %s, %s, %s, %s, %s, %.2f, %s", getCustomerID(),
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%.2f,%s", getCustomerID(),
                 getUsername(), getPassword(), getFullname(), getPhone(), getEmail(),
                 getAddress(), getSpending(), getMembership());
     }
 
+    @Override
+    public boolean logout() {
+        if (Objects.equals(SystemFile.getCurrentUsername(), null)) {
+            return false;
+        } else {
+            SystemFile.setCurrentUsername(null);
+            return true;
+        }
+    }
+
     // functional methods
     private String getContinuousID() {
-        ArrayList<String> customerIDs = SystemFile.viewCustomerIDList();
+        ArrayList<String> customerIDs = SystemFile.getCustomerIDList();
         String inputCustomerID;
         if (customerIDs != null) {
             int largestID = 0;
@@ -90,14 +100,14 @@ public class Customer extends User{
         double productPrice = 0;
         boolean addItemRun = true;
         boolean checkProduct;
-        Scanner inputScanner = new Scanner(System.in);
 
-        ArrayList<Product> productsList = ProductUtils.viewProductList();
-        ArrayList<Bag> bagsList = BagUtils.viewBagsList();
+        ArrayList<Product> productsList = SystemFile.viewProductList();
+        ArrayList<Bag> bagsList = SystemFile.viewBagsList();
 
         System.out.print("\n");
         System.out.println("----- Add Items(s) -----");
         do{
+            Scanner inputScanner = new Scanner(System.in);
             System.out.print("Enter ProductID/ ProductName: ");
             try{
                 productInfo = inputScanner.nextLine();
@@ -130,35 +140,33 @@ public class Customer extends User{
                         System.out.print("Enter amount: ");
                         int userInputInt = inputScanner.nextInt();
                         inputScanner.nextLine();
-                        if (userInputInt > 0){
-                            if(bagsList != null){
-                                boolean checkBag = false;
-                                for (Bag bag : bagsList) {
-                                    if(customerID.equalsIgnoreCase(bag.getCustomerID()) && productId.equalsIgnoreCase(bag.getProductID())) {
-                                        checkBag = true;
-                                        bag.setProductAmount(bag.getProductAmount() + userInputInt);
-                                        bag.setProductPrice(bag.getProductAmount() * productPrice);
-                                        break;
-                                    }
-                                }
 
-                                if(!checkBag){
-                                    bagsList.add(new Bag(customerID, productId, productName, userInputInt, userInputInt * productPrice));
+                        if(bagsList != null){
+                            boolean checkBag = false;
+                            for (Bag bag : bagsList) {
+                                if(customerID.equalsIgnoreCase(bag.getCustomerID()) && productId.equalsIgnoreCase(bag.getProductID())) {
+                                    checkBag = true;
+                                    bag.setProductAmount(bag.getProductAmount() + userInputInt);
+                                    bag.setProductPrice(bag.getProductAmount() * productPrice);
+                                    break;
                                 }
-                            }else{
-                                bagsList = new ArrayList<>();
-                                bagsList.add(new Bag(customerID, productId, productName, userInputInt, userInputInt * productPrice));
                             }
 
-                            PrintWriter pw = new PrintWriter(new FileWriter("bag.txt", false));
-                            pw.println("#customerID,ProductID,ProductName,Amount,Price");
-                            for(Bag bag : bagsList){
-                                pw.println(String.format("%s,%s,%s,%d,%.2f", bag.getCustomerID(), bag.getProductID(), bag.getProductName(), bag.getProductAmount(), bag.getProductPrice()));
+                            if(!checkBag){
+                                bagsList.add(new Bag(customerID, productId, userInputInt, userInputInt * productPrice));
                             }
-                            pw.close();
                         }else{
-                            System.out.println("Please enter a valid input!");
+                            bagsList = new ArrayList<>();
+                            bagsList.add(new Bag(customerID, productId, userInputInt, userInputInt * productPrice));
                         }
+
+                        PrintWriter pw = new PrintWriter(new FileWriter("bag.txt", false));
+                        pw.println("#customerID,ProductID,Amount,Price");
+                        for(Bag bag : bagsList){
+                            pw.println(String.format("%s,%s,%d,%.2f", getCustomerID(), bag.getProductID(),
+                                    bag.getProductAmount(), bag.getProductPrice()));
+                        }
+                        pw.close();
                     }else if(userInputString.equalsIgnoreCase("n")){
                         System.out.println("Processing...");
                     }else{
@@ -167,8 +175,7 @@ public class Customer extends User{
                 }catch (InputMismatchException e) {
                     System.out.println("Please enter a valid input!");
                 } catch (IOException e) {
-                    //throw new RuntimeException(e);
-                    System.out.println("An error occurred (updateBag)!");
+                    throw new RuntimeException(e);
                 }
             }
             else {
@@ -179,11 +186,13 @@ public class Customer extends User{
                 System.out.print("Do you want to add another item [y/n]: ");
                 userInputString = inputScanner.nextLine();
                 if(userInputString.equalsIgnoreCase("n")){
+                    System.out.println("Returning to Menu...");
                     addItemRun = false;
                 } else if (userInputString.equalsIgnoreCase("y")) {
                     System.out.println("Processing...");
                 }else{
                     System.out.println("Hmm! We will consider this answer as a no.");
+                    System.out.println("Returning to Menu...");
                     addItemRun = false;
                 }
             }catch(InputMismatchException e){
@@ -191,156 +200,7 @@ public class Customer extends User{
             }
 
         }while(addItemRun);
-    }
 
-    public void editBag(){
-        String userInputString, userInputString2;
-        Scanner inputScanner = new Scanner(System.in);
-        int bagAmount = 0;
-        int userInputInt;
-        boolean editBagRun = true;
-        ArrayList<Bag> bagsList = BagUtils.viewBagsList();
 
-        System.out.print("\n");
-        System.out.println("----- Edit Bag -----");
-        do{
-            System.out.print("\n");
-            ArrayList<Bag> result= BagUtils.viewBagDetail();
-            bagAmount = result.size();
-
-            if(bagAmount == 0){
-                try{
-                    System.out.print("\n");
-                    System.out.print("Do you want to add item [y/n]: ");
-                    userInputString = inputScanner.nextLine();
-                    if (userInputString.equalsIgnoreCase("y")) {
-                        addItem();
-                    }else if((!userInputString.equalsIgnoreCase("y")) && (!userInputString.equalsIgnoreCase("n"))){
-                        System.out.println("Hmm! We will consider this answer as a no.");
-                    }
-                }catch(InputMismatchException e){
-                    System.out.println("Please enter a valid input!");
-                }
-                editBagRun = false;
-            }else{
-                System.out.print("\n");
-                System.out.println((bagAmount + 1) + ". Remove All Items");
-                System.out.println((bagAmount + 2) + ". Return to Menu");
-                try{
-                    System.out.print("\n");
-                    System.out.print("Please select a number to change the corresponding item: ");
-                    userInputInt = inputScanner.nextInt();
-                    inputScanner.nextLine();
-                    System.out.print("\n");
-                    if(userInputInt == (bagAmount + 1)){
-                        if (bagsList != null) {
-                            bagsList.removeIf(bag -> bag.getCustomerID().equalsIgnoreCase(customerID));
-                            BagUtils.updateBag(bagsList);
-                            System.out.println("Your bag currently has 0 item.");
-                            editBagRun = false;
-                        }else{
-                            editBagRun = false;
-                        }
-                    }
-                    else if(userInputInt == (bagAmount + 2)){
-                        editBagRun = false;
-                    } else if (userInputInt > (bagAmount + 1)) {
-                        System.out.println("Please enter a valid number!");
-                    } else if(userInputInt < 0){
-                        System.out.println("Please enter a valid number!");
-                    }else{
-                        if (bagsList != null) {
-                            int cnt = 1;
-                            Bag editBag = null;
-                            for(Bag bag : result){
-                                if (cnt == userInputInt){
-                                    editBag = bag;
-                                    System.out.println(editBag);
-                                    break;
-                                }
-                                cnt += 1;
-                            }
-                            System.out.println("1. Edit Amount");
-                            System.out.println("2. Remove Item");
-                            System.out.println("3. Cancel");
-                            System.out.print("\n");
-                            System.out.print("Enter your number option: ");
-                            int userInputInt2 = inputScanner.nextInt();
-                            inputScanner.nextLine();
-                            if(userInputInt2 == 3){
-                                System.out.println("Processing...");
-                            } else if (userInputInt2 == 2) {
-                                System.out.print("Do you want to remove this item [y/n]: ");
-                                userInputString2 = inputScanner.nextLine();
-                                if(userInputString2.equalsIgnoreCase("y") || userInputString2.equalsIgnoreCase("yes")){
-                                    if(editBag != null){
-                                        Bag finalEditBag = editBag;
-                                        bagsList.removeIf(p -> ( (p.getProductID()).equalsIgnoreCase(finalEditBag.getProductID()) && (p.getCustomerID()).equalsIgnoreCase(finalEditBag.getCustomerID())));
-                                        BagUtils.updateBag(bagsList);
-                                    }
-                                } else if (userInputString2.equalsIgnoreCase("n")) {
-                                    System.out.println("Processing...");
-                                }else{
-                                    System.out.println("Hmm! We will consider this answer as a no.");
-                                    System.out.println("Processing...");
-                                }
-                            } else if (userInputInt2 == 1) {
-                                System.out.print("Enter New Amount: ");
-                                int userInputAmount = inputScanner.nextInt();
-                                inputScanner.nextLine();
-
-                                if (userInputAmount > 0){
-                                    if(editBag != null){
-                                        for(Bag bag2 : bagsList){
-                                            if((bag2.getProductID()).equalsIgnoreCase(editBag.getProductID()) && (bag2.getCustomerID()).equalsIgnoreCase(editBag.getCustomerID())){
-                                                bag2.setProductAmount(userInputAmount);
-                                                bag2.setProductPrice(bag2.getProductAmount() * bag2.getProductPrice());
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    BagUtils.updateBag(bagsList);
-                                }else{
-                                    System.out.println("Please enter a valid input!");
-                                }
-                            }
-                        }else{
-                            System.out.println("Your bag currently has 0 item.");
-                            editBagRun = false;
-                        }
-                    }
-                }catch (InputMismatchException e){
-                    System.out.println("Please enter a valid input!");
-                }
-            }
-            if(editBagRun){
-                try{
-                    System.out.print("Do you to continue edit [y/n]:");
-                    userInputString = inputScanner.nextLine();
-
-                    if((!userInputString.equalsIgnoreCase("y")) && (!userInputString.equalsIgnoreCase("n"))){
-                        System.out.println("Hmm! We will consider this answer as a no.");
-                        editBagRun = false;
-                    } else if ((userInputString.equalsIgnoreCase("n"))) {
-                        editBagRun = false;
-                    }
-                }catch(InputMismatchException e){
-                    editBagRun = false;
-                }
-            }
-        }while(editBagRun);
-    }
-
-    @Override
-    public boolean logout() {
-        if (Objects.equals(SystemFile.getCurrentUsername(), null)) {
-            System.out.println("Logout unsuccessfully!");
-            return false;
-        } else {
-            SystemFile.setCurrentUsername(null);
-            System.out.println("Logout successfully!");
-            return true;
-        }
     }
 }

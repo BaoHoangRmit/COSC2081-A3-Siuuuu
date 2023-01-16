@@ -61,7 +61,7 @@ public class Product extends Category implements Comparable<Product>{
 
     @Override
     public String toString() {
-        return String.format("%s, %s, %.2f, %s", getProductID(), getProductName(), getProductPrice(), getCategoryName());
+        return String.format("%s | %s | %.2f | %s | %s", getProductID(), getProductName(), getProductPrice(), getProductDesc(),getCategoryName());
     }
 
     @Override
