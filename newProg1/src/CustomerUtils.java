@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class CustomerUtils {
@@ -258,42 +259,241 @@ public class CustomerUtils {
         }while(editBagRun);
     }
 
+    static void checkoutBag(){
+        System.out.println("\n----- Check Out Bag -----");
+        ArrayList<Bag> curBagsList = BagUtils.viewBagDetail();
+        ArrayList<Bag> bagsList = SystemFile.viewBagsList();
+
+        String userInputString;
+        Scanner inputScanner = new Scanner(System.in);
+
+        ArrayList<Order> ordersList = SystemFile.viewOrdersList();
+        String orderId = OrderUtils.genOrderId();
+
+        if (curBagsList.size() == 0) {
+            System.out.print("");
+        } else {
+            try {
+                Bag editBag = null;
+                System.out.print("Do you want to order these items [y/n]: ");
+                userInputString = inputScanner.nextLine();
+
+                if (userInputString.equalsIgnoreCase("y")) {
+                    for (Bag bag : curBagsList) {
+                        if (ordersList == null) {
+                            ordersList = new ArrayList<>();
+                        }
+                        ordersList.add(new Order(bag.getCustomerID(), orderId, bag.getProductName(), bag.getProductAmount(), bag.getProductPrice(), BagUtils.getBagTotal()));
+
+                        if (bagsList != null) {
+                            for (Bag bag2 : bagsList) {
+                                if ((bag2.getCustomerID()).equalsIgnoreCase(bag.getCustomerID()) && (bag2.getProductID()).equalsIgnoreCase(bag.getProductID())) {
+                                    editBag = bag2;
+                                }
+                            }
+                            bagsList.remove(editBag);
+                        } else {
+                            bagsList = new ArrayList<>();
+                        }
+                    }
+                    if (ordersList != null) {
+                        SystemFile.updateOrder(ordersList);
+                    }
+                    BagUtils.updateBag(Objects.requireNonNullElseGet(bagsList, ArrayList::new));
+                    System.out.println("\n----- Orders Updated -----\n");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid input!");
+            }
+        }
+    }
+
+    static void viewProductMenu(){
+        System.out.println("\n----- Product List -----");
+
+        ArrayList<Product> proList = SystemFile.viewProductList();
+        String productID = "", productName = "", productDesc = "", productCat = "";
+        double productPrice = 0;
+        int saleNumber = 0;
+
+        boolean productMenuRun = true;
+        do {
+            if (proList != null){
+                String userInputString;
+                Scanner inputScanner = new Scanner(System.in);
+
+                System.out.print("\n");
+                System.out.println("Product List Options:");
+                System.out.println("1. View All Product(s)");
+                System.out.println("2. Add Item to Bag");
+                System.out.println("3. View Product(s) By Category");
+                System.out.println("4. View Product(s) By ID");
+                System.out.println("5. View Product(s) By Name");
+                System.out.println("6. Sort Product(s) By Price Ascending");
+                System.out.println("7. Sort Product(s) By Price Descending");
+                System.out.println("8. View Most Popular Product");
+                System.out.println("9. View Least Popular Product");
+                System.out.println("10. Return to Menu");
+
+                try{
+                    System.out.print("\n");
+                    System.out.print("Enter a number: ");
+                    userInputString = inputScanner.nextLine();
+                    if(userInputString.equalsIgnoreCase("1")){
+                        System.out.println("Product(ID. Name):");
+                        for(Product pro : proList){
+                            productID = pro.getProductID();
+                            productName = pro.getProductName();
+                            productDesc = pro.getProductDesc();
+                            productCat = pro.getCategoryName();
+                            productPrice = pro.getProductPrice();
+                            saleNumber = pro.getSaleNumber();
+
+                            System.out.println(String.format("%s. %s: " +
+                                    "\n    Description: %s " +
+                                    "\n    Category: %s" +
+                                    "\n    Price: %.4f" +
+                                    "\n    Total Sale: %d", productID, productName, productDesc, productCat, productPrice, saleNumber));
+                        }
+                    } else if (userInputString.equalsIgnoreCase("2")) {
+                        addItem();
+                    }else if (userInputString.equalsIgnoreCase("3")) {
+                        System.out.print("Enter Category Name: ");
+                        String userInputString2 = inputScanner.nextLine();
+                        ProductUtils.viewProductByCategory(userInputString2);
+                    } else if (userInputString.equalsIgnoreCase("4")) {
+                        System.out.print("Enter ProductID: ");
+                        String userInputString2 = inputScanner.nextLine();
+                        ProductUtils.viewProductByID(userInputString2);
+                    }else if (userInputString.equalsIgnoreCase("5")) {
+                        System.out.print("Enter Product Name: ");
+                        String userInputString2 = inputScanner.nextLine();
+                        ProductUtils.viewProductByName(userInputString2);
+                    }else if (userInputString.equalsIgnoreCase("6")) {
+                        ProductUtils.sortAllProductByPriceAsc();
+                    }else if (userInputString.equalsIgnoreCase("7")) {
+                        ProductUtils.sortAllProductByPriceDes();
+                    }else if (userInputString.equalsIgnoreCase("8")) {
+                        ProductUtils.viewMostPopularProducts();
+                    }else if (userInputString.equalsIgnoreCase("9")) {
+                        ProductUtils.viewLeastPopularProducts();
+                    }else if (userInputString.equalsIgnoreCase("10")) {
+                        productMenuRun = false;
+                    } else{
+                        System.out.println("Please Enter A Valid Number!");
+                    }
+                }catch(InputMismatchException e){
+                    System.out.println("Please enter a valid input!");
+                }
+            }
+            else{
+                System.out.println("0 Product Found!");
+            }
+        }while(productMenuRun);
+    }
+
     static void viewBagMenu(){
         System.out.println("----- Bag Content -----");
 
         ArrayList<Bag> currentBagsList = BagUtils.viewBagDetail();
 
-        boolean viewBagRun;
-        int bagAmount = 0;
+        boolean viewBagRun = true;
+        int bagAmount = currentBagsList.size();
         String userInputString;
         Scanner inputScanner = new Scanner(System.in);
 
         try{
             do{
-                viewBagRun = true;
-
-                System.out.print("\n");
-                System.out.println("Bag Options");
-                System.out.println("1. Edit Bag");
-                System.out.println("2. Check Out Bag");
-                System.out.println("3. Return To Menu");
-                System.out.print("Please Select A Number: ");
-                userInputString = inputScanner.nextLine();
-
-                if(userInputString.equalsIgnoreCase("1")){
-                    viewBagRun = false;
-                    editBag();
-                } else if (userInputString.equalsIgnoreCase("2")) {
-                    viewBagRun = false;
-                } else if (userInputString.equalsIgnoreCase("3")) {
+                if(bagAmount == 0){
                     viewBagRun = false;
                 }else{
-                    System.out.println("Please Enter A Valid Number!");
-                }
+                    System.out.print("\n");
+                    System.out.println("Bag Options");
+                    System.out.println("1. Edit Bag");
+                    System.out.println("2. Check Out Bag");
+                    System.out.println("3. Return To Menu");
+                    System.out.print("Please Select A Number: ");
+                    userInputString = inputScanner.nextLine();
 
+                    if(userInputString.equalsIgnoreCase("1")){
+                        viewBagRun = false;
+                        editBag();
+                    } else if (userInputString.equalsIgnoreCase("2")) {
+                        viewBagRun = false;
+                        checkoutBag();
+                    } else if (userInputString.equalsIgnoreCase("3")) {
+                        viewBagRun = false;
+                    }else{
+                        System.out.println("Please Enter A Valid Number!");
+                    }
+                }
             }while(viewBagRun);
         }catch(InputMismatchException e){
             viewBagRun = false;
+            System.out.println("Please enter a valid input!");
+        }
+    }
+
+    static void viewOrderMenu(){
+        System.out.println("----- Orders -----");
+
+        ArrayList<String> currentOrdersList = OrderUtils.viewOrderDetail();
+
+        boolean viewOrderRun = true;
+        int bagAmount = currentOrdersList.size();
+        String userInputString;
+        Scanner inputScanner = new Scanner(System.in);
+
+        try{
+            do{
+                if(bagAmount == 0){
+                    viewOrderRun = false;
+                }else{
+                    System.out.print("\n");
+                    System.out.println("Order Options");
+                    System.out.println("1. Pay Order(s)");
+                    System.out.println("2. Return To Menu");
+                    System.out.print("Please Select A Number: ");
+                    userInputString = inputScanner.nextLine();
+
+                    if(userInputString.equalsIgnoreCase("1")){
+                        viewOrderRun = false;
+                        currentOrdersList = OrderUtils.viewOrder();
+                        ArrayList<Order> ordersList = SystemFile.viewOrdersList();
+
+                        if(ordersList == null){
+                            ordersList = new ArrayList<>();
+                        }
+
+                        try {
+                            System.out.print("Do you want to order these items [y/n]: ");
+                            String userInputString2 = inputScanner.nextLine();
+
+                            if (userInputString2.equalsIgnoreCase("y")) {
+                                for(String ordersId : currentOrdersList){
+                                    for (Order orders : ordersList){
+                                        if(orders.getOrderID().equalsIgnoreCase(ordersId)){
+                                            orders.setPaymentStatus("Paid");
+                                        }
+                                    }
+                                }
+                                SystemFile.updateOrder(ordersList);
+
+                                System.out.println("\n----- Orders Updated -----");
+                                System.out.println("All bills have been paid!");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("Please enter a valid input!");
+                        }
+                    }else if (userInputString.equalsIgnoreCase("2")) {
+                        viewOrderRun = false;
+                    }else{
+                        System.out.println("Please Enter A Valid Number!");
+                    }
+                }
+            }while(viewOrderRun);
+        }catch(InputMismatchException e){
+            viewOrderRun = false;
             System.out.println("Please enter a valid input!");
         }
     }

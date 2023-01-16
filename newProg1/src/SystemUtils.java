@@ -16,9 +16,9 @@ public class SystemUtils {
         System.out.println("1: View Personal Information");
         System.out.println("2: View Product");
         System.out.println("3: View Current Bag");
-        System.out.println("6: View Order(s)");
-        System.out.println("7: Logout");
-        System.out.println("8: Quit application (your account will be logged out)");
+        System.out.println("4: View Order(s)");
+        System.out.println("5: Logout");
+        System.out.println("6: Quit application (your account will be logged out)");
         System.out.print("\n");
     }
 
@@ -26,6 +26,7 @@ public class SystemUtils {
         boolean hasRun = false;
         logInLoop: do {
             if (hasRun) {
+                System.out.print("\n");
                 System.out.print("Enter your number option again: ");
             }else{
                 System.out.print("Enter your number option: ");
@@ -51,6 +52,7 @@ public class SystemUtils {
                         break;
                     default:
                         System.out.println("Please enter one of the given number!");
+                        System.out.print("\n");
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Please enter a valid input!");
@@ -77,7 +79,7 @@ public class SystemUtils {
                     case 1:
                         if (currentCustomer != null) {
                             hasRun1 = false;
-                            System.out.println(currentCustomer);
+                            //CustomerUtils.viewInfoMenu();
                             printLoggedInMenu();
                         } else {
                             hasRun1 = true;
@@ -88,7 +90,9 @@ public class SystemUtils {
                     case 2:
                         if (currentCustomer != null) {
                             hasRun1 = false;
-
+                            CustomerUtils.viewProductMenu();
+                            System.out.println("Returning to Menu...");
+                            printLoggedInMenu();
                         } else {
                             hasRun1 = true;
                             System.out.println("You are not logged in yet!");
@@ -100,6 +104,7 @@ public class SystemUtils {
                             hasRun1 = false;
                             System.out.print("\n");
                             CustomerUtils.viewBagMenu();
+                            System.out.println("Returning to Menu...");
                             printLoggedInMenu();
 
                         } else {
@@ -108,7 +113,21 @@ public class SystemUtils {
                         }
                         break;
 
-                    case 7:
+                    case 4:
+                        if (currentCustomer != null) {
+                            hasRun1 = false;
+                            System.out.print("\n");
+                            CustomerUtils.viewOrderMenu();
+                            System.out.println("Returning to Menu...");
+                            printLoggedInMenu();
+
+                        } else {
+                            hasRun1 = true;
+                            System.out.println("You are not logged in yet!");
+                        }
+                        break;
+
+                    case 5:
                         if (currentCustomer != null) {
                             hasRun1 = false;
                             currentCustomer.logout();
@@ -119,7 +138,7 @@ public class SystemUtils {
                         }
                         break;
 
-                    case 8:
+                    case 6:
                         hasRun1 = false;
                         System.exit(0);
 

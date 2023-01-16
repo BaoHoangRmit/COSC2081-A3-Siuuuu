@@ -20,7 +20,7 @@ public class Customer extends User{
         super(username, password, fullName, phone, email, address);
         this.customerID = UserUtils.getContinuousID();
         this.spending = 0;
-        this.membership = "Silver";
+        this.membership = "None";
     }
 
     // getter

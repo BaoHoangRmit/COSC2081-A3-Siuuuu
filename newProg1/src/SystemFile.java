@@ -1,6 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -163,5 +161,68 @@ public class SystemFile {
             return null;
         }
         return null;
+    }
+
+    static ArrayList<Order> viewOrdersList() {
+        try {
+            Scanner fileScanner = new Scanner((new File("data/order.txt")));
+            ArrayList<Order> ordersList = new ArrayList<Order>();
+
+            fileScanner.nextLine();
+
+            while (fileScanner.hasNext()) {
+                String line = fileScanner.nextLine();
+                StringTokenizer inReader = new StringTokenizer(line, ",");
+
+                if (inReader.countTokens() != 8) {
+                    throw new IOException("Invalid Input Format (order)");
+                } else {
+                    // get each string seperated by ","
+
+                    String customerId = inReader.nextToken();
+                    String orderId = inReader.nextToken();
+                    String productName = inReader.nextToken();
+                    int productAmount = Integer.parseInt(inReader.nextToken());
+                    double productPrice = Double.parseDouble(inReader.nextToken());
+                    double orderPrice = Double.parseDouble(inReader.nextToken());
+                    String paymentStatus = inReader.nextToken();
+                    String orderStatus = inReader.nextToken();
+
+                    ordersList.add(new Order(customerId, orderId, productName, productAmount, productPrice, orderPrice, paymentStatus, orderStatus));
+                }
+            }
+
+            fileScanner.close();
+
+            return ordersList;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found (order)!");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+        return null;
+    }
+
+    static void updateOrder(ArrayList<Order> ordersList) {
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter("data/order.txt", false));
+            pw.println("#customerId, orderId, productName, productAmount, productPrice, orderPrice, paymentStatus, orderStatus");
+            for (Order order : ordersList) {
+                pw.println(String.format("%s,%s,%s,%d,%.4f,%.4f,%s,%s",
+                        order.getUserID(),
+                        order.getOrderID(),
+                        order.getProductName(),
+                        order.getProductAmount(),
+                        order.getProductPrice(),
+                        order.getOrderPrice(),
+                        order.getPaymentStatus(),
+                        order.getOrderStatus()));
+            }
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred (updateOrder)!");
+        }
     }
 }
