@@ -92,8 +92,8 @@ public class Customer extends User{
         boolean checkProduct;
         Scanner inputScanner = new Scanner(System.in);
 
-        ArrayList<Product> productsList = SystemFile.viewProductList();
-        ArrayList<Bag> bagsList = SystemFile.viewBagsList();
+        ArrayList<Product> productsList = ProductUtils.viewProductList();
+        ArrayList<Bag> bagsList = BagUtils.viewBagsList();
 
         System.out.print("\n");
         System.out.println("----- Add Items(s) -----");
@@ -193,66 +193,24 @@ public class Customer extends User{
         }while(addItemRun);
     }
 
-    public void viewBagDetail(){
-        int cnt = 0;
-        double totalPrice = 0;
-        HashMap<Integer,Double> result= viewBag();
-
-        for(Map.Entry m:result.entrySet()){
-            cnt = (int) m.getKey();
-            totalPrice = (double) m.getValue();
-        }
-
-        if(cnt == 0){
-            System.out.println("Your bag currently has 0 item.");
-        } else if(cnt == 1){
-            System.out.println("Total: " + cnt + " item.");
-            System.out.print(String.format("Total Price: %.4f", totalPrice));
-        }else if(cnt > 1){
-            System.out.println("Total: " + cnt + " items.");
-            System.out.print(String.format("Total Price: %.4f", totalPrice));
-        }
-    }
-    public HashMap<Integer,Double> viewBag(){
-        ArrayList<Bag> bagsList = SystemFile.viewBagsList();
-        int cnt = 0;
-        double totalPrice = 0;
-
-        if (bagsList != null) {
-            for(Bag bag : bagsList){
-                if(bag.getCustomerID().equalsIgnoreCase(customerID)){
-                    cnt += 1;
-                    System.out.println(String.format("%d. %s: Amount: %d, Price: %.4f", cnt, bag.getProductName() ,bag.getProductAmount(), bag.getProductPrice()));
-                    totalPrice += bag.getProductPrice();
-                }
-            }
-        }
-
-        HashMap<Integer,Double> result=new HashMap<Integer,Double>();
-        result.put(cnt, totalPrice);
-        return result;
-    }
-
     public void editBag(){
         String userInputString, userInputString2;
         Scanner inputScanner = new Scanner(System.in);
         int bagAmount = 0;
         int userInputInt;
         boolean editBagRun = true;
-        ArrayList<Bag> bagsList = SystemFile.viewBagsList();
+        ArrayList<Bag> bagsList = BagUtils.viewBagsList();
 
         System.out.print("\n");
         System.out.println("----- Edit Bag -----");
         do{
             System.out.print("\n");
-            HashMap<Integer,Double> result= viewBag();
+            ArrayList<Bag> result= BagUtils.viewBagDetail();
+            bagAmount = result.size();
 
-            for(Map.Entry m:result.entrySet()){
-                bagAmount = (int) m.getKey();
-            }
             if(bagAmount == 0){
                 try{
-                    viewBagDetail();
+                    System.out.print("\n");
                     System.out.print("Do you want to add item [y/n]: ");
                     userInputString = inputScanner.nextLine();
                     if (userInputString.equalsIgnoreCase("y")) {
@@ -265,20 +223,22 @@ public class Customer extends User{
                 }
                 editBagRun = false;
             }else{
+                System.out.print("\n");
                 System.out.println((bagAmount + 1) + ". Remove All Items");
                 System.out.println((bagAmount + 2) + ". Return to Menu");
                 try{
+                    System.out.print("\n");
                     System.out.print("Please select a number to change the corresponding item: ");
                     userInputInt = inputScanner.nextInt();
                     inputScanner.nextLine();
+                    System.out.print("\n");
                     if(userInputInt == (bagAmount + 1)){
                         if (bagsList != null) {
                             bagsList.removeIf(bag -> bag.getCustomerID().equalsIgnoreCase(customerID));
-                            SystemFile.updateBag(bagsList);
+                            BagUtils.updateBag(bagsList);
                             System.out.println("Your bag currently has 0 item.");
                             editBagRun = false;
                         }else{
-                            System.out.println("Your bag currently has 0 item.");
                             editBagRun = false;
                         }
                     }
@@ -292,21 +252,19 @@ public class Customer extends User{
                         if (bagsList != null) {
                             int cnt = 1;
                             Bag editBag = null;
-                            for(Bag bag : bagsList){
-                                if (cnt != userInputInt){
-                                    if(bag.getCustomerID().equalsIgnoreCase(customerID)){
-                                        cnt += 1;
-                                    }
-                                }else{
+                            for(Bag bag : result){
+                                if (cnt == userInputInt){
                                     editBag = bag;
                                     System.out.println(editBag);
                                     break;
                                 }
+                                cnt += 1;
                             }
                             System.out.println("1. Edit Amount");
                             System.out.println("2. Remove Item");
                             System.out.println("3. Cancel");
-                            System.out.println("Enter your number option: ");
+                            System.out.print("\n");
+                            System.out.print("Enter your number option: ");
                             int userInputInt2 = inputScanner.nextInt();
                             inputScanner.nextLine();
                             if(userInputInt2 == 3){
@@ -316,8 +274,9 @@ public class Customer extends User{
                                 userInputString2 = inputScanner.nextLine();
                                 if(userInputString2.equalsIgnoreCase("y") || userInputString2.equalsIgnoreCase("yes")){
                                     if(editBag != null){
-                                        bagsList.remove(editBag);
-                                        SystemFile.updateBag(bagsList);
+                                        Bag finalEditBag = editBag;
+                                        bagsList.removeIf(p -> ( (p.getProductID()).equalsIgnoreCase(finalEditBag.getProductID()) && (p.getCustomerID()).equalsIgnoreCase(finalEditBag.getCustomerID())));
+                                        BagUtils.updateBag(bagsList);
                                     }
                                 } else if (userInputString2.equalsIgnoreCase("n")) {
                                     System.out.println("Processing...");
@@ -326,17 +285,22 @@ public class Customer extends User{
                                     System.out.println("Processing...");
                                 }
                             } else if (userInputInt2 == 1) {
-                                System.out.println("Enter New Amount: ");
+                                System.out.print("Enter New Amount: ");
                                 int userInputAmount = inputScanner.nextInt();
                                 inputScanner.nextLine();
 
                                 if (userInputAmount > 0){
                                     if(editBag != null){
-                                        editBag.setProductAmount(userInputAmount);
-                                        editBag.setProductPrice(editBag.getProductAmount() * editBag.getProductPrice());
+                                        for(Bag bag2 : bagsList){
+                                            if((bag2.getProductID()).equalsIgnoreCase(editBag.getProductID()) && (bag2.getCustomerID()).equalsIgnoreCase(editBag.getCustomerID())){
+                                                bag2.setProductAmount(userInputAmount);
+                                                bag2.setProductPrice(bag2.getProductAmount() * bag2.getProductPrice());
+                                                break;
+                                            }
+                                        }
                                     }
 
-                                    SystemFile.updateBag(bagsList);
+                                    BagUtils.updateBag(bagsList);
                                 }else{
                                     System.out.println("Please enter a valid input!");
                                 }
@@ -352,7 +316,7 @@ public class Customer extends User{
             }
             if(editBagRun){
                 try{
-                    System.out.println("Do you to continue edit [y/n]:");
+                    System.out.print("Do you to continue edit [y/n]:");
                     userInputString = inputScanner.nextLine();
 
                     if((!userInputString.equalsIgnoreCase("y")) && (!userInputString.equalsIgnoreCase("n"))){

@@ -3,3 +3,5 @@ C001,B0,Macbook1,2,19.9800,48.9700,Paid,Delivering
 C001,B0,Samsung6,1,28.9900,48.9700,Paid,Delivering
 C001,B1,Macbook1,1,9.9900,9.9900,Paid,Delivering
 C001,B2,Samsung6,2,57.9800,57.9800,Paid,Delivering
+C001,B3,Macbook1,2,19.9800,103.9400,Unpaid,Delivering
+C001,B3,Mouse1,4,83.9600,103.9400,Unpaid,Delivering

@@ -87,7 +87,7 @@ public class OrderUtils {
 
 
         if (curBagsList.size() == 0) {
-            System.out.println("Your bag currently has 0 item.");
+            System.out.print("");;
         } else {
             try {
                 Bag editBag = null;
@@ -109,6 +109,7 @@ public class OrderUtils {
                     }
                     updateOrder(ordersList);
                     BagUtils.updateBag(Objects.requireNonNullElseGet(bagsList, ArrayList::new));
+                    System.out.println("----- Bills Updated -----");
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Please enter a valid input!");
@@ -172,11 +173,15 @@ public class OrderUtils {
 
         if (currentOrdersList.size() > 0 && ordersList != null) {
             int billAmount = currentOrdersList.size();
+
+            System.out.print("\n");
             System.out.println((billAmount + 1) + ". Pay All");
             System.out.println((billAmount + 2) + ". Cancel");
-            System.out.println("Enter a number to pay the corresponding bill: ");
+            System.out.print("\n");
+            System.out.print("Enter a number to pay the corresponding bill: ");
             int userInputInt = inputScanner.nextInt();
             inputScanner.nextLine();
+            System.out.print("\n");
 
             if (userInputInt == (billAmount + 1)) {
                 for(String ordersId : currentOrdersList){

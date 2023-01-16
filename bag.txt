@@ -1,3 +1,1 @@
 #customerID,ProductID,ProductName,Amount,Price
-C002,1112,iPhone2,2,39.9800
-C002,2234,Samsung6,2,57.9800

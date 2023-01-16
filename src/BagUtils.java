@@ -57,19 +57,21 @@ public class BagUtils {
     static ArrayList<Bag> viewBagDetail(){
         ArrayList<Bag> bagsList = viewBag();
         double totalPrice = getBagTotal();
+        int totalAmount = 0;
         int cnt = 0;
 
         if(bagsList.size() > 0){
             for(Bag item : bagsList){
                 cnt += 1;
+                totalAmount += item.getProductAmount();
                 System.out.println(String.format("%d. %s: Amount: %d, Price: %.4f", cnt, item.getProductName() ,item.getProductAmount(), item.getProductPrice()));
             }
 
-            if(bagsList.size() == 1){
-                System.out.println("Total: " + bagsList.size() + " item.");
+            if(totalAmount == 1){
+                System.out.println("Total: " + totalAmount + " item.");
                 System.out.println(String.format("Total Price: %.4f", totalPrice));
             }else {
-                System.out.println("Total: " + bagsList.size() + " items.");
+                System.out.println("Total: " + totalAmount + " items.");
                 System.out.println(String.format("Total Price: %.4f", totalPrice));
             }
         }else{
