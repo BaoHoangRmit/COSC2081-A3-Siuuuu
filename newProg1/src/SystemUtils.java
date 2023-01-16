@@ -64,8 +64,22 @@ public class SystemUtils {
 
     // technical function
     public static void printLoggedInMenu() {
+        BagUtils.announceBagChange();
+        CustomerUtils.updateSpending();
+        Customer curCus = UserUtils.viewCurrentCustomer();
+
         System.out.print("\n");
         System.out.println("----- CUSTOMER SCREEN -----");
+        if(curCus != null){
+            String mbs = curCus.getMembership();
+            if(mbs.equalsIgnoreCase("Silver")){
+                System.out.println("Membership: Silver");
+            } else if (mbs.equalsIgnoreCase("Gold")) {
+                System.out.println("Membership: Gold");
+            } else if (mbs.equalsIgnoreCase("Diamond")) {
+                System.out.println("Membership: Diamond");
+            }
+        }
         System.out.println("1: View Personal Information");
         System.out.println("2: View Product");
         System.out.println("3: View Current Bag");
