@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Objects;
@@ -495,6 +496,77 @@ public class CustomerUtils {
         }catch(InputMismatchException e){
             viewOrderRun = false;
             System.out.println("Please enter a valid input!");
+        }
+    }
+
+    static void updateSpending(){
+        Customer curCus = UserUtils.viewCurrentCustomer();
+        ArrayList<Order> ordersList = SystemFile.viewOrdersList();
+        ArrayList<Customer> cusLists = SystemFile.viewCustomerList();
+
+        String currentCustomerId = "";
+        double spending = 0;
+
+        if (curCus != null) {
+            currentCustomerId = curCus.getCustomerID();
+            if (ordersList != null) {
+                for (Order orders : ordersList) {
+                    if (orders.getUserID().equalsIgnoreCase(currentCustomerId)) {
+                        if (orders.getOrderStatus().equalsIgnoreCase("Paid")) {
+                            spending += orders.getOrderPrice();
+                        }
+                    }
+                }
+
+                curCus.setSpending(spending);
+                if(spending > 5000000 && spending <= 10000000){
+                    curCus.setMembership("Silver");
+                } else if (spending > 10000000 && spending <= 25000000) {
+                    curCus.setMembership("Gold");
+                } else if (spending > 25000000) {
+                    curCus.setMembership("Diamond");
+                }else{
+                    curCus.setMembership("None");
+                }
+
+                try {
+                    PrintWriter pw = new PrintWriter(new FileWriter("data/customers.txt", false));
+                    pw.println("#ID,Username,Password,Name,Phone,Email,Address,Spending,Membership");
+                    if (cusLists != null) {
+                        for(Customer cus : cusLists){
+                            if(cus.getCustomerID().equalsIgnoreCase(currentCustomerId)){
+                                pw.println(String.format("%s,%s,%s,%s,%s,%s,%s,%.4f,%s",
+                                        currentCustomerId,
+                                        curCus.getUsername(),
+                                        curCus.getPassword(),
+                                        curCus.getFullName(),
+                                        curCus.getPhone(),
+                                        curCus.getEmail(),
+                                        curCus.getAddress(),
+                                        curCus.getSpending(),
+                                        curCus.getMembership()));
+                            }else{
+                                pw.println(String.format("%s,%s,%s,%s,%s,%s,%s,%.4f,%s",
+                                        cus.getCustomerID(),
+                                        cus.getUsername(),
+                                        cus.getPassword(),
+                                        cus.getFullName(),
+                                        cus.getPhone(),
+                                        cus.getEmail(),
+                                        cus.getAddress(),
+                                        cus.getSpending(),
+                                        cus.getMembership()));
+                            }
+                        }
+                        pw.close();
+                    }
+
+                } catch (FileNotFoundException e) {
+                    System.out.println("File not found (customer)!");
+                } catch (IOException e) {
+                    System.out.println("An unexpected error occurred!");
+                }
+            }
         }
     }
 }

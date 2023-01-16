@@ -9,7 +9,7 @@ public class Main {
                 "s3926050, Hoang Quoc Bao\n" +
                 "s3938338, Nguyen Thien Co\n" +
                 "s3927474, Hoang Vinh Khue\n" +
-                "sXXXXXXX, Student Name");
+                "s3924594, Nguyen Dang Ha");
         System.out.println("----- WELCOME SCREEN -----");
 
         System.out.println();
