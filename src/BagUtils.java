@@ -1,49 +1,12 @@
-import java.io.*;
-import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class BagUtils {
-    static ArrayList<Bag> viewBagsList() {
-        try {
-            Scanner fileScanner = new Scanner((new File("bag.txt")));
-            ArrayList<Bag> bagsList = new ArrayList<Bag>();
-
-            fileScanner.nextLine();
-
-            while (fileScanner.hasNext()) {
-                String line = fileScanner.nextLine();
-                StringTokenizer inReader = new StringTokenizer(line, ",");
-
-                if (inReader.countTokens() != 5) {
-                    throw new IOException("Invalid Input Format (bag)");
-                } else {
-                    // get each string seperated by ","
-
-                    String customerId = inReader.nextToken();
-                    String productId = inReader.nextToken();
-                    String productName = inReader.nextToken();
-                    int productAmount = Integer.parseInt(inReader.nextToken());
-                    double productPrice = Double.parseDouble(inReader.nextToken());
-
-                    bagsList.add(new Bag(customerId, productId, productName, productAmount, productPrice));
-                }
-            }
-
-            fileScanner.close();
-
-            return bagsList;
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found (bag)");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }catch(NoSuchElementException e){
-            return null;
-        }
-        return null;
-    }
-
     static void updateBag(ArrayList<Bag> bagsList){
         try {
-            PrintWriter pw = new PrintWriter(new FileWriter("bag.txt", false));
+            PrintWriter pw = new PrintWriter(new FileWriter("data/bag.txt", false));
             pw.println("#customerID,ProductID,ProductName,Amount,Price");
             for(Bag bag : bagsList){
                 pw.println(String.format("%s,%s,%s,%d,%.4f", bag.getCustomerID(), bag.getProductID(), bag.getProductName(), bag.getProductAmount(), bag.getProductPrice()));
@@ -54,36 +17,10 @@ public class BagUtils {
         }
     }
 
-    static ArrayList<Bag> viewBagDetail(){
-        ArrayList<Bag> bagsList = viewBag();
-        double totalPrice = getBagTotal();
-        int totalAmount = 0;
-        int cnt = 0;
-
-        if(bagsList.size() > 0){
-            for(Bag item : bagsList){
-                cnt += 1;
-                totalAmount += item.getProductAmount();
-                System.out.println(String.format("%d. %s: Amount: %d, Price: %.4f", cnt, item.getProductName() ,item.getProductAmount(), item.getProductPrice()));
-            }
-
-            if(totalAmount == 1){
-                System.out.println("Total: " + totalAmount + " item.");
-                System.out.println(String.format("Total Price: %.4f", totalPrice));
-            }else {
-                System.out.println("Total: " + totalAmount + " items.");
-                System.out.println(String.format("Total Price: %.4f", totalPrice));
-            }
-        }else{
-            System.out.println("Your bag currently has 0 item.");
-        }
-
-        return bagsList;
-    }
     static ArrayList<Bag> viewBag(){
-        ArrayList<Bag> bagsList = viewBagsList();
+        ArrayList<Bag> bagsList = SystemFile.viewBagsList();
         ArrayList<Bag> currentBagsList = new ArrayList<Bag>();
-        Customer currentCustomer = SystemFile.viewCurrentCustomer();
+        Customer currentCustomer = UserUtils.viewCurrentCustomer();
         String currentCustomerId = "";
 
         if(currentCustomer != null){
@@ -100,12 +37,73 @@ public class BagUtils {
         return currentBagsList;
     }
 
+    static ArrayList<Bag> viewBagDetail(){
+        ArrayList<Bag> bagsList = viewBag();
+        double totalPrice = 0;
+        int totalAmount = 0;
+        int dst = 100;
+        int cnt = 0;
+        String mbs = "None";
+        Customer curCus = UserUtils.viewCurrentCustomer();
+        if(curCus != null){
+            mbs = curCus.getMembership();
+            if(mbs.equalsIgnoreCase("silver")){
+                dst = 90;
+            } else if (mbs.equalsIgnoreCase("gold")) {
+                dst = 85;
+            } else if (mbs.equalsIgnoreCase("diamond")) {
+                dst = 80;
+            }
+        }
+
+        if(bagsList.size() > 0){
+            for(Bag item : bagsList){
+                cnt += 1;
+                totalAmount += item.getProductAmount();
+                totalPrice += item.getProductPrice();
+                System.out.println(String.format("%d. %s: Amount: %d, Price: %.4f", cnt, item.getProductName() ,item.getProductAmount(), item.getProductPrice()));
+            }
+
+            if(totalAmount == 1){
+                System.out.println("Total: " + totalAmount + " item.");
+                System.out.println(String.format("Total Price: %.4f", totalPrice));
+                if(dst != 100){
+                    System.out.println(String.format("Membership Discount: %d%%", (100-dst)));
+                    System.out.println(String.format("Final Price: %.4f", (totalPrice * dst / 100)));
+                }
+            }else {
+                System.out.println("Total: " + totalAmount + " items.");
+                System.out.println(String.format("Total Price: %.4f", totalPrice));
+                System.out.println(String.format("Membership Discount: %d%%", (100-dst)));
+                System.out.println(String.format("Final Price: %.4f", (totalPrice * dst / 100)));
+            }
+        }else{
+            System.out.println("Your bag currently has 0 item.");
+        }
+
+        return bagsList;
+    }
+
     static double getBagTotal(){
-        ArrayList<Bag> bagsList = viewBagsList();
+        ArrayList<Bag> bagsList = SystemFile.viewBagsList();
         ArrayList<Bag> currentBagsList = new ArrayList<Bag>();
-        Customer currentCustomer = SystemFile.viewCurrentCustomer();
+        Customer currentCustomer = UserUtils.viewCurrentCustomer();
         String currentCustomerId = "";
         double totalPrice = 0;
+
+        int dst = 100;
+        String mbs = "None";
+        Customer curCus = UserUtils.viewCurrentCustomer();
+        if(curCus != null){
+            mbs = curCus.getMembership();
+            if(mbs.equalsIgnoreCase("silver")){
+                dst = 90;
+            } else if (mbs.equalsIgnoreCase("gold")) {
+                dst = 85;
+            } else if (mbs.equalsIgnoreCase("diamond")) {
+                dst = 80;
+            }
+        }
 
         if(currentCustomer != null){
             currentCustomerId = currentCustomer.getCustomerID();
@@ -122,58 +120,29 @@ public class BagUtils {
                     totalPrice += item.getProductPrice();
                 }
             }
+            totalPrice = totalPrice * dst / 100;
         }
         return totalPrice;
     }
 
-    static void checkBag(){
-        ArrayList<Bag> bagsList = viewBagsList();
-        ArrayList<Bag> bagChangesList = new ArrayList<Bag>();
-        ArrayList<Product> productsList = SystemFile.viewProductList();
-        Customer currentCustomer = SystemFile.viewCurrentCustomer();
+    static ArrayList<Bag> mergeBags(ArrayList<Bag> bag, ArrayList<Bag> bagMain){
+        ArrayList<Bag> bags1 = new ArrayList<>(bag);
+        ArrayList<Bag> bags2 = new ArrayList<>(bagMain);
 
-        boolean checkBaginProduct;
-        int changeCnt = 0;
-        if(currentCustomer != null){
-            if (bagsList != null) {
-                for(Bag cart : bagsList){
-                    checkBaginProduct = true;
-                    if (productsList != null) {
-                        for(Product item : productsList){
-                            if ( ( (cart.getProductID()).equalsIgnoreCase( (item.getProductID()) ) ) ) {
-                                checkBaginProduct = false;
-                                break;
-                            }
-                        }
-                        if( ( (cart.getCustomerID()).equalsIgnoreCase( (currentCustomer.getCustomerID()) ) ) && checkBaginProduct ){
-                            changeCnt += 1;
-                            bagChangesList.add(cart);
-                        }
-                    }else{
-                        for(Bag cart2 : bagsList){
-                            if( (cart2.getCustomerID()).equalsIgnoreCase( (currentCustomer.getCustomerID()) ) ){
-                                changeCnt += 1;
-                                bagChangesList.add(cart2);
-                            }
-                        }
-                    }
+        String bag1CId, bag1PId, bag2CId, bag2PId;
+
+        for(Bag bag1 : bags1){
+            bag1CId = bag1.getCustomerID();
+            bag1PId = bag1.getProductID();
+            for(Bag bag2 : bags2){
+                bag2CId = bag2.getCustomerID();
+                bag2PId = bag2.getProductID();
+                if(bag2CId.equalsIgnoreCase(bag1CId) && bag2PId.equalsIgnoreCase(bag1PId)){
+                    bag2.setProductPrice(bag1.getProductPrice());
+                    bag2.setProductAmount(bag1.getProductAmount());
                 }
             }
         }
-
-        if(changeCnt > 0){
-            System.out.println("----- Welcome Back -----");
-            System.out.print("\n");
-            System.out.println("----- Bag Update -----");
-            System.out.println("Some items have been removed by either application administrator or product owner.");
-            System.out.println(changeCnt + " item(s) will be removed from your Bag:");
-
-            for(Bag cart : bagChangesList){
-                System.out.println(cart);
-                bagsList.remove(cart);
-            }
-
-            updateBag(bagsList);
-        }
+        return bags2;
     }
 }

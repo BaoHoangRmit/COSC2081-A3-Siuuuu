@@ -1,16 +1,16 @@
 public abstract class User {
     private String username;
     private String password; // do not need to hash
-    private String fullname;
+    private String fullName;
     private String phone;
     private String email;
     private String address;
 
-    public User(String username, String password, String fullname, String phone, String email,
+    public User(String username, String password, String fullName, String phone, String email,
                 String address) {
         this.username = username;
         this.password = password;
-        this.fullname = fullname;
+        this.fullName = fullName;
         this.phone = phone;
         this.email = email;
         this.address = address;
@@ -25,8 +25,8 @@ public abstract class User {
         return password;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getFullName() {
+        return fullName;
     }
 
     public String getPhone() {
@@ -50,8 +50,8 @@ public abstract class User {
         this.password = password;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public void setPhone(String phone) {
@@ -67,7 +67,7 @@ public abstract class User {
     }
 
     // abstract methods
-     public abstract boolean logout();
+    public abstract boolean logout();
 
 
 }

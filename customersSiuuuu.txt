@@ -1,5 +1,0 @@
-#ID,Username,Password,Name,Phone,Email,Address,Spending,Membership
-C001,customer1,password1,Customer 1,111-111-111,1@customer.com,customer address 1,3.00,Regular
-C002,customer2,password2,Customer 2,222-222-222,2@customer.com,customer address 2,9.00,Silver
-C003,customer3,password3,Customer 3,333-333-333,3@customer.com,customer address 3,15.00,Gold
-C004,customer4,password4,Customer 4,444-444-444,4@customer.com,customer address 4,21.00,Platinum
