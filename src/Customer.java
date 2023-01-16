@@ -8,13 +8,22 @@ public class Customer extends User{
     private double spending;
     private String membership;
 
-    public Customer(String username, String password, String fullName, String phone,
-                    String email, String address, String customerID, double spending,
+    public Customer(String customerID, String username, String password, String fullName, String phone,
+                    String email, String address, double spending,
                     String membership) {
         super(username, password, fullName, phone, email, address);
         this.customerID = customerID;
         this.spending = spending;
         this.membership = membership;
+    }
+
+    // customer register constructor
+    public Customer(String username, String password, String fullName, String phone,
+                    String email, String address) {
+        super(username, password, fullName, phone, email, address);
+        this.customerID = getContinuousID();
+        this.spending = 0;
+        this.membership = "Normal";
     }
 
     // getter
@@ -45,9 +54,44 @@ public class Customer extends User{
 
     @Override
     public String toString() {
-        return String.format("%s, %s, %s, %s, %s, %s, %s, %.2f, %s", getUsername(),
-                getPassword(), getFullname(), getPhone(), getEmail(), getAddress(),
-                getCustomerID(), getSpending(), getMembership());
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%.2f,%s", getCustomerID(),
+                getUsername(), getPassword(), getFullname(), getPhone(), getEmail(),
+                getAddress(), getSpending(), getMembership());
+    }
+
+    @Override
+    public boolean logout() {
+        if (Objects.equals(SystemFile.getCurrentUsername(), null)) {
+            return false;
+        } else {
+            SystemFile.setCurrentUsername(null);
+            return true;
+        }
+    }
+
+    // functional methods
+    private String getContinuousID() {
+        ArrayList<String> customerIDs = SystemFile.getCustomerIDList();
+        String inputCustomerID;
+        if (customerIDs != null) {
+            int largestID = 0;
+            for (String s: customerIDs) {
+                int id = Integer.parseInt(s.substring(s.indexOf("C") + 1));
+                if (largestID < id) {
+                    largestID = id;
+                }
+            }
+
+            int idLength = 4;
+            inputCustomerID = "C" + Integer.toString(largestID + 1);
+            for (int i = 1; i < idLength - 1; i++) {
+                inputCustomerID = inputCustomerID.substring(0,i) + "0" + inputCustomerID.substring(i);
+            }
+        } else {
+            inputCustomerID = "C001";
+        }
+
+        return inputCustomerID;
     }
 
     public void addItem(){
@@ -119,7 +163,8 @@ public class Customer extends User{
                         PrintWriter pw = new PrintWriter(new FileWriter("bag.txt", false));
                         pw.println("#customerID,ProductID,Amount,Price");
                         for(Bag bag : bagsList){
-                            pw.println(String.format("%s,%s,%d,%.2f", getCustomerID(), bag.getProductID(), bag.getProductAmount(), bag.getProductPrice()));
+                            pw.println(String.format("%s,%s,%d,%.2f", getCustomerID(), bag.getProductID(),
+                                    bag.getProductAmount(), bag.getProductPrice()));
                         }
                         pw.close();
                     }else if(userInputString.equalsIgnoreCase("n")){
@@ -157,17 +202,5 @@ public class Customer extends User{
         }while(addItemRun);
 
 
-    }
-
-    @Override
-    public boolean logout() {
-        if (Objects.equals(SystemFile.getCurrentUsername(), null)) {
-            System.out.println("Logout unsuccessfully!");
-            return false;
-        } else {
-            SystemFile.setCurrentUsername(null);
-            System.out.println("Logout successfully!");
-            return true;
-        }
     }
 }
