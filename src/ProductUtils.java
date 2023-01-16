@@ -1,10 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.*;
 
 public class ProductUtils {
-
+    //Category utilities
     static ArrayList<Category> viewCategoryList() {
         try {
             Scanner fileScanner = new Scanner((new File("category.txt")));
@@ -44,17 +45,15 @@ public class ProductUtils {
 
         if (categories != null) {
             for (Category category: categories) {
-                if (id.equals(category.getCategoryID())) {
+                if (id.equalsIgnoreCase(category.getCategoryID())) {
                     sortedCategories.add(category);
                 }
             }
 
             if (!sortedCategories.isEmpty()) {
-                for (Category category: sortedCategories) {
-                    System.out.println(category);
-                }
+                ProductUtils.printListOfCategories(sortedCategories);
             } else {
-                System.out.println("Cannot find any categories with the ID: "+id);
+                System.out.println("Cannot find any categories with the ID: "+id+"\n");
             }
         }
 
@@ -66,22 +65,23 @@ public class ProductUtils {
 
         if (categories != null) {
             for (Category category: categories) {
-                if (name.equals(category.getCategoryName())) {
+                if (name.equalsIgnoreCase(category.getCategoryName())) {
                     sortedCategories.add(category);
                 }
             }
 
             if (!sortedCategories.isEmpty()) {
-                for (Category category: sortedCategories) {
-                    System.out.println(category);
-                }
+                ProductUtils.printListOfCategories(sortedCategories);
             } else {
-                System.out.println("Cannot find any categories with the name: " +name);
+                System.out.println("Cannot find any categories with the name: " +name+"\n");
             }
         }
 
     }
 
+
+
+    //Product utilities
     static ArrayList<Product> viewProductList() {
         try {
             Scanner fileScanner = new Scanner((new File("product.txt")));
@@ -121,24 +121,61 @@ public class ProductUtils {
         return null;
     }
 
+    static void viewProductByID(String id) {
+        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> sortedProducts = new ArrayList<>();
+        if (products != null) {
+            for (Product product: products) {
+                if (id.equals(product.getProductID())) {
+                    sortedProducts.add(product);
+                }
+            }
+            if (!sortedProducts.isEmpty()) {
+                Collections.sort(sortedProducts);
+                System.out.println("Products with the ID: " + id);
+                ProductUtils.printListOfProducts(sortedProducts);
+            } else {
+                System.out.println("Cannot find any products with the ID: "+ id + "\n");
+            }
+        }
+    }
+
+    static void viewProductByName(String name) {
+        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> sortedProducts = new ArrayList<>();
+
+        if (products != null) {
+            for (Product product: products) {
+                if (name.equalsIgnoreCase(product.getProductName())) {
+                    sortedProducts.add(product);
+                }
+            }
+            if (!sortedProducts.isEmpty()) {
+                Collections.sort(sortedProducts);
+                System.out.println("Products with the name: " + name);
+                ProductUtils.printListOfProducts(sortedProducts);
+            } else {
+                System.out.println("Cannot find any products with the name: "+ name + "\n");
+            }
+        }
+    }
+
     static void viewProductByCategory(String categoryName) {
         ArrayList<Product> products = ProductUtils.viewProductList();
         ArrayList<Product> sortedProducts = new ArrayList<>();
 
         if (products != null) {
             for (Product product: products) {
-                if (categoryName.equals(product.getCategoryName())) {
+                if (categoryName.equalsIgnoreCase(product.getCategoryName())) {
                     sortedProducts.add(product);
                 }
             }
             if (!sortedProducts.isEmpty()) {
                 Collections.sort(sortedProducts);
                 System.out.println("Products with the category: " + categoryName);
-                for (Product product: sortedProducts) {
-                    System.out.println(product);
-                }
+                ProductUtils.printListOfProducts(sortedProducts);
             } else {
-                System.out.println("Cannot find any products with the category: "+categoryName);
+                System.out.println("Cannot find any products with the category: "+categoryName+"\n");
             }
         }
     }
@@ -148,20 +185,22 @@ public class ProductUtils {
         ArrayList<Product> sortedProducts = new ArrayList<>();
 
         if (products != null) {
-            for (Product product: products) {
-                double price = product.getProductPrice();
-                if (price >= min && price <= max) {
-                    sortedProducts.add(product);
+            if (max >= min) {
+                for (Product product: products) {
+                    double price = product.getProductPrice();
+                    if (price >= min && price <= max) {
+                        sortedProducts.add(product);
+                    }
                 }
-            }
-            if (!sortedProducts.isEmpty()) {
-                Collections.sort(sortedProducts);
-                System.out.printf("Products with the price range %.2f - %.2f \n", min, max);
-                for (Product product: sortedProducts) {
-                    System.out.println(product);
+                if (!sortedProducts.isEmpty()) {
+                    Collections.sort(sortedProducts);
+                    System.out.printf("Products with the price range %.2f - %.2f \n", min, max);
+                    ProductUtils.printListOfProducts(sortedProducts);
+                } else {
+                    System.out.println("Cannot find any products in that price range: \n");
                 }
             } else {
-                System.out.println("Cannot find any products in that price range");
+                System.out.println("Invalid price range! \n");
             }
         }
     }
@@ -172,10 +211,84 @@ public class ProductUtils {
         if (products != null) {
             Collections.sort(products);
             System.out.println("All products sorted by price ascendant order: ");
-            for (Product product: products) {
-                System.out.println(product);
-            }
+            ProductUtils.printListOfProducts(products);
         }
     }
 
+    static void sortAllProductByPriceDes() {
+        ArrayList<Product> products = ProductUtils.viewProductList();
+
+        if (products != null) {
+            Collections.sort(products);
+            Collections.reverse(products);
+            System.out.println("All products sorted by price descendant order: ");
+            ProductUtils.printListOfProducts(products);
+        }
+    }
+
+    static void viewMostPopularProducts() {
+        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> sortedProducts = new ArrayList<>();
+
+        if (products != null) {
+            int maxSaleNum = 0;
+            for (Product product: products) {
+                int saleNum = product.getSaleNumber();
+                if (saleNum >= maxSaleNum) {
+                    maxSaleNum = saleNum;
+                }
+            }
+            for (Product product: products) {
+                if (product.getSaleNumber() == maxSaleNum) {
+                    sortedProducts.add(product);
+                }
+            }
+
+            System.out.println("Most popular products with " + maxSaleNum + " items sold \n");
+            ProductUtils.printListOfProducts(sortedProducts);
+        }
+    }
+
+    static void viewLeastPopularProducts() {
+        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> sortedProducts = new ArrayList<>();
+
+        if (products != null) {
+            Product firstProduct = products.get(0);
+            int minSaleNum = firstProduct.getSaleNumber();
+
+            for (Product product: products) {
+                int saleNum = product.getSaleNumber();
+                if (saleNum <= minSaleNum) {
+                    minSaleNum = saleNum;
+                }
+            }
+
+            for (Product product: products) {
+                if (product.getSaleNumber() == minSaleNum) {
+                    sortedProducts.add(product);
+                }
+            }
+
+            System.out.println("Least popular products with " + minSaleNum + " items sold \n");
+            ProductUtils.printListOfProducts(sortedProducts);
+        }
+    }
+
+    //This method will print a given arraylist of product
+    static void printListOfProducts(ArrayList<Product> products) {
+        System.out.println("ID | Name | Price | Description | Category");
+        for (Product product: products) {
+            System.out.println(product);
+        }
+        System.out.println("");
+    }
+
+    static void printListOfCategories(ArrayList<Category> categories) {
+        System.out.println("ID | Name");
+        for (Category category: categories) {
+            System.out.println(category);
+        }
+        System.out.println("");
+    }
 }
