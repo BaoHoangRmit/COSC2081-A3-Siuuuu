@@ -1,15 +1,68 @@
-import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class SystemUtils {
     public static void printLoginMenu() {
+        System.out.println("\n");
         System.out.println("----- MENU SCREEN -----");
-        System.out.println("1: Login");
-        System.out.println("2: Exit Application");
+        System.out.println("1: Login as Customer");
+        System.out.println("2: Signup as Customer");
+        System.out.println("3: Login as Admin");
+        System.out.println("4: Exit Application");
     }
 
+    public static void printAdminLoggedInMenu() {
+        System.out.print("\n");
+        System.out.println("----- ADMIN SCREEN -----");
+        System.out.println("1: View personal information");
+        System.out.println("2: Logout");
+        System.out.println("Enter your number option: ");
+    }
+
+    public static void checkAdminLoggedInMenuInput() {
+        Admin currentAdmin = (Admin) UserUtils.getCurrentUser();
+        boolean hasRunAdmin = false;
+        loggedInAdminLoop: do {
+            if (currentAdmin != null){
+                if (hasRunAdmin) {
+                    System.out.print("Enter your number option again: ");
+                }
+
+                try {
+                    Scanner scanner = new Scanner(System.in);
+                    int inputOption = scanner.nextInt();
+                    switch (inputOption) {
+                        case 1:
+                            UserUtils.printCurrentUserInfo();
+                            printAdminLoggedInMenu();
+                            hasRunAdmin = false;
+                            continue loggedInAdminLoop;
+                        case 2:
+                            if (currentAdmin.logout()) {
+                                System.out.println("Logout successfully!");
+                                printLoginMenu();
+                                break loggedInAdminLoop;
+                            } else {
+                                System.out.println("Logout unsuccessfully!");
+                            }
+                        default:
+                            System.out.println("Please enter one of the given number!");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Please enter a valid input!");
+                }
+
+                hasRunAdmin = true;
+            } else {
+                System.out.println("You are not logged in yet!");
+                printLoggedInMenu();
+                break loggedInAdminLoop;
+            }
+        } while (Objects.equals(UserUtils.getCurrentUsername(), currentAdmin.getUsername()));
+    }
+
+    // technical function
     public static void printLoggedInMenu() {
         System.out.print("\n");
         System.out.println("----- CUSTOMER SCREEN -----");
@@ -37,7 +90,7 @@ public class SystemUtils {
                 int inputOption = scanner.nextInt();
                 switch (inputOption) {
                     case 1:
-                        if (UserUtils.login()) {
+                        if (UserUtils.login("Customer")) {
                             printLoggedInMenu();
                             checkLoggedInMenuInput();
                             hasRun = false;
@@ -46,10 +99,28 @@ public class SystemUtils {
                             hasRun = true;
                         }
                         break;
+
                     case 2:
+                        UserUtils.registerCustomer();
+                        hasRun = false;
+                        break;
+
+                    case 3:
+                        if (UserUtils.login("Admin")) {
+                            printAdminLoggedInMenu();
+                            checkAdminLoggedInMenuInput();
+                            hasRun = false;
+                        } else {
+                            printLoginMenu();
+                            hasRun = true;
+                        }
+                        break;
+
+                    case 4:
                         hasRun = false;
                         System.exit(0);
                         break;
+
                     default:
                         System.out.println("Please enter one of the given number!");
                         System.out.print("\n");
@@ -64,7 +135,7 @@ public class SystemUtils {
     public static void checkLoggedInMenuInput() {
         Customer currentCustomer = UserUtils.viewCurrentCustomer();
         boolean hasRun1 = false;
-        loggedInLoop: do {
+        do {
             if (hasRun1) {
                 System.out.print("\n");
                 System.out.print("Enter your number option again: ");
@@ -151,4 +222,6 @@ public class SystemUtils {
             }
         } while (Objects.equals(UserUtils.getCurrentUsername(), (currentCustomer != null ? currentCustomer.getUsername() : null)));
     }
+
+
 }

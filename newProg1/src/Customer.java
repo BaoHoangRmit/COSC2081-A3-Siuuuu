@@ -51,7 +51,7 @@ public class Customer extends User{
 
     @Override
     public String toString() {
-        return String.format("%s, %s, %s, %s, %s, %s, %s, %.2f, %s", getCustomerID(),
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%.2f,%s", getCustomerID(),
                 getUsername(), getPassword(), getFullName(), getPhone(), getEmail(),
                 getAddress(), getSpending(), getMembership());
     }
@@ -67,4 +67,6 @@ public class Customer extends User{
             return true;
         }
     }
+
+
 }

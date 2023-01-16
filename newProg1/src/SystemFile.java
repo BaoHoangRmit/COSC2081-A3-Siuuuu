@@ -1,10 +1,79 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class SystemFile {
+    static HashMap<String, String> getCustomerAccountList() {
+        ArrayList<Customer> customers = viewCustomerList();
+        HashMap<String, String> accounts = new HashMap<String, String>();
+
+        if (customers != null) {
+            for (Customer customer : customers) {
+                accounts.put(customer.getUsername(), customer.getPassword());
+            }
+        } else {
+            return null;
+        }
+
+        return accounts;
+    }
+
+    static ArrayList<Admin> getAdminListFromFile() {
+        try {
+            Scanner fileScanner = new Scanner((new File("data/admins.txt")));
+            ArrayList<Admin> adminsList = new ArrayList<Admin>();
+
+            fileScanner.nextLine();
+
+            while (fileScanner.hasNext()) {
+                String line = fileScanner.nextLine();
+                StringTokenizer inReader = new StringTokenizer(line, ",");
+
+                if (inReader.countTokens() != 7) {
+                    throw new IOException("Invalid Input Format");
+                } else {
+
+                    // get each string seperated by ","
+                    String fileAdminID = inReader.nextToken();
+                    String fileUsername = inReader.nextToken();
+                    String filePassword = inReader.nextToken();
+                    String fileFullname = inReader.nextToken();
+                    String filePhone = inReader.nextToken();
+                    String fileEmail = inReader.nextToken();
+                    String fileAddress = inReader.nextToken();
+
+                    // add customers from txt into list
+                    adminsList.add(new Admin(fileAdminID, fileUsername, filePassword,
+                            fileFullname, filePhone, fileEmail, fileAddress));
+                }
+            }
+
+            fileScanner.close();
+
+            return adminsList;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
+    static HashMap<String, String> getAdminAccountList() {
+        ArrayList<Admin> admins = SystemFile.getAdminListFromFile();
+        HashMap<String, String> accounts = new HashMap<String, String>();
+
+        if (admins != null) {
+            for (Admin admin : admins) {
+                accounts.put(admin.getUsername(), admin.getPassword());
+            }
+        } else {
+            return null;
+        }
+
+        return accounts;
+    }
+
     static ArrayList<Customer> viewCustomerList() {
         try {
             Scanner fileScanner = new Scanner((new File("data/customers.txt")));
@@ -223,6 +292,17 @@ public class SystemFile {
             pw.close();
         } catch (IOException e) {
             System.out.println("An error occurred (updateOrder)!");
+        }
+    }
+
+    static void appendToFile(String filePath, String writeInfo) {
+        String fileName = filePath.substring(0, filePath.indexOf("."));
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter(filePath, true ));
+            pw.println(writeInfo);
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("Cannot write to " + fileName + " data file!");
         }
     }
 }
