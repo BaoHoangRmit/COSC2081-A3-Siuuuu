@@ -456,7 +456,6 @@ public class UserUtils {
     }
 
     static void updateCustomerToFile(ArrayList<Customer> customers) {
-        boolean firstItem = true;
         SystemFile.writeToFile("data/customers.txt", "#ID,Username,Password,Name,Phone,Email,Address,Spending,Membership");
         for (Customer customer : customers) {
             SystemFile.appendToFile("data/customers.txt", customer.toString());
