@@ -69,5 +69,5 @@ public abstract class User {
     // abstract methods
     public abstract boolean logout();
 
-
+    public abstract String display();
 }

@@ -12,69 +12,6 @@ public class SystemUtils {
         System.out.println("4: Exit Application");
     }
 
-    public static void printAdminLoggedInMenu() {
-        System.out.print("\n");
-        System.out.println("----- ADMIN SCREEN -----");
-        System.out.println("1: View personal information");
-        System.out.println("2: Logout");
-        System.out.println("Enter your number option: ");
-    }
-
-    public static void checkAdminLoggedInMenuInput() {
-        Admin currentAdmin = (Admin) UserUtils.getCurrentUser();
-        boolean hasRunAdmin = false;
-        loggedInAdminLoop: do {
-            if (currentAdmin != null){
-                if (hasRunAdmin) {
-                    System.out.print("Enter your number option again: ");
-                }
-
-                try {
-                    Scanner scanner = new Scanner(System.in);
-                    int inputOption = scanner.nextInt();
-                    switch (inputOption) {
-                        case 1:
-                            UserUtils.printCurrentUserInfo();
-                            printAdminLoggedInMenu();
-                            hasRunAdmin = false;
-                            continue loggedInAdminLoop;
-                        case 2:
-                            if (currentAdmin.logout()) {
-                                System.out.println("Logout successfully!");
-                                printLoginMenu();
-                                break loggedInAdminLoop;
-                            } else {
-                                System.out.println("Logout unsuccessfully!");
-                            }
-                        default:
-                            System.out.println("Please enter one of the given number!");
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println("Please enter a valid input!");
-                }
-
-                hasRunAdmin = true;
-            } else {
-                System.out.println("You are not logged in yet!");
-                printLoggedInMenu();
-                break loggedInAdminLoop;
-            }
-        } while (Objects.equals(UserUtils.getCurrentUsername(), currentAdmin.getUsername()));
-    }
-
-    // technical function
-    public static void printLoggedInMenu() {
-        System.out.print("\n");
-        System.out.println("----- CUSTOMER SCREEN -----");
-        System.out.println("1: View Personal Information");
-        System.out.println("2: View Product");
-        System.out.println("3: View Current Bag");
-        System.out.println("4: View Order(s)");
-        System.out.println("5: Logout");
-        System.out.println("6: Quit application (your account will be logged out)");
-        System.out.print("\n");
-    }
-
     public static void checkLoginMenuInput() {
         boolean hasRun = false;
         logInLoop: do {
@@ -132,8 +69,74 @@ public class SystemUtils {
         } while (Objects.equals(UserUtils.getCurrentUsername(), null));
     }
 
+    public static void printAdminLoggedInMenu() {
+        System.out.print("\n");
+        System.out.println("----- ADMIN SCREEN -----");
+        System.out.println("1: View personal information");
+        System.out.println("2: Logout");
+        System.out.println("Enter your number option: ");
+    }
+
+    public static void checkAdminLoggedInMenuInput() {
+        Admin currentAdmin = (Admin) UserUtils.getCurrentUser();
+        boolean hasRunAdmin = false;
+        loggedInAdminLoop: do {
+            if (currentAdmin != null){
+                if (hasRunAdmin) {
+                    System.out.print("Enter your number option again: ");
+                }
+
+                try {
+                    Scanner scanner = new Scanner(System.in);
+                    int inputOption = scanner.nextInt();
+                    switch (inputOption) {
+                        case 1:
+                            UserUtils.printCurrentUserInfo();
+                            printAdminLoggedInMenu();
+                            hasRunAdmin = false;
+                            continue loggedInAdminLoop;
+                        case 2:
+                            if (currentAdmin.logout()) {
+                                System.out.println("Logout successfully!");
+                                printLoginMenu();
+                                break loggedInAdminLoop;
+                            } else {
+                                System.out.println("Logout unsuccessfully!");
+                            }
+                        default:
+                            System.out.println("Please enter one of the given number!");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Please enter a valid input!");
+                }
+
+                hasRunAdmin = true;
+            } else {
+                System.out.println("You are not logged in yet!");
+                printLoggedInMenu();
+                break loggedInAdminLoop;
+            }
+        } while (Objects.equals(UserUtils.getCurrentUsername(), currentAdmin.getUsername()));
+    }
+
+    // technical function
+    public static void printLoggedInMenu() {
+        System.out.print("\n");
+        System.out.println("----- CUSTOMER SCREEN -----");
+        System.out.println("1: View Personal Information");
+        System.out.println("2: Update Personal Information");
+        System.out.println("3: View Product");
+        System.out.println("4: View Current Bag");
+        System.out.println("5: View Order(s)");
+        System.out.println("6: Logout");
+        System.out.println("7: Quit application (your account will be logged out)");
+        System.out.print("\n");
+    }
+
     public static void checkLoggedInMenuInput() {
-        Customer currentCustomer = UserUtils.viewCurrentCustomer();
+//        Customer currentCustomer = UserUtils.viewCurrentCustomer();
+        Customer currentCustomer = (Customer) UserUtils.getCurrentUser();
+//        System.out.println(currentCustomer);
         boolean hasRun1 = false;
         do {
             if (hasRun1) {
@@ -150,7 +153,8 @@ public class SystemUtils {
                     case 1:
                         if (currentCustomer != null) {
                             hasRun1 = false;
-                            //CustomerUtils.viewInfoMenu();
+                            UserUtils.printCurrentUserInfo();
+                            System.out.println("Returning to Menu...");
                             printLoggedInMenu();
                         } else {
                             hasRun1 = true;
@@ -161,7 +165,15 @@ public class SystemUtils {
                     case 2:
                         if (currentCustomer != null) {
                             hasRun1 = false;
-                            CustomerUtils.viewProductMenu();
+                            Customer updateCustomer = UserUtils.updateCustomer(UserUtils.getCustomerByUsername(
+                                    UserUtils.getCurrentUsername()).getCustomerID());
+
+                            UserUtils.setCurrentUsername(updateCustomer.getUsername());
+
+                            currentCustomer = (Customer) UserUtils.getCurrentUser();
+
+                            System.out.println("Updated Info: ");
+                            UserUtils.printCurrentUserInfo();
                             System.out.println("Returning to Menu...");
                             printLoggedInMenu();
                         } else {
@@ -171,6 +183,18 @@ public class SystemUtils {
                         break;
 
                     case 3:
+                    if (currentCustomer != null) {
+                        hasRun1 = false;
+                        CustomerUtils.viewProductMenu();
+                        System.out.println("Returning to Menu...");
+                        printLoggedInMenu();
+                    } else {
+                        hasRun1 = true;
+                        System.out.println("You are not logged in yet!");
+                    }
+                    break;
+
+                    case 4:
                         if (currentCustomer != null) {
                             hasRun1 = false;
                             System.out.print("\n");
@@ -184,7 +208,7 @@ public class SystemUtils {
                         }
                         break;
 
-                    case 4:
+                    case 5:
                         if (currentCustomer != null) {
                             hasRun1 = false;
                             System.out.print("\n");
@@ -198,7 +222,7 @@ public class SystemUtils {
                         }
                         break;
 
-                    case 5:
+                    case 6:
                         if (currentCustomer != null) {
                             hasRun1 = false;
                             currentCustomer.logout();
@@ -209,7 +233,7 @@ public class SystemUtils {
                         }
                         break;
 
-                    case 6:
+                    case 7:
                         hasRun1 = false;
                         System.exit(0);
 
@@ -223,5 +247,65 @@ public class SystemUtils {
         } while (Objects.equals(UserUtils.getCurrentUsername(), (currentCustomer != null ? currentCustomer.getUsername() : null)));
     }
 
+//    public static void printLoggedInPersonalInformationMenu() {
+//        System.out.print("\n");
+//        System.out.println("----- CUSTOMER SCREEN -----");
+//        System.out.println("Your account information:");
+//        UserUtils.printCurrentUserInfo();
+//        System.out.print("\n");
+//        System.out.println("1: Update your personal information");
+//        System.out.println("2: Back to menu");
+//        System.out.print("\n");
+//    }
+//
+//    public static void checkLoggedInPersonalInformationMenuInput() {
+////        Customer currentCustomer = UserUtils.viewCurrentCustomer();
+//        Customer currentCustomer = (Customer) UserUtils.getCurrentUser();
+//        boolean hasRun1 = false;
+//        do {
+//            if (hasRun1) {
+//                System.out.print("\n");
+//                System.out.print("Enter your number option again: ");
+//            }else{
+//                System.out.print("Enter your number option: ");
+//            }
+//
+//            try {
+//                Scanner scanner = new Scanner(System.in);
+//                int inputOption = scanner.nextInt();
+//                switch (inputOption) {
+//                    case 1:
+//                        if (currentCustomer != null) {
+//                            hasRun1 = false;
+//                            //CustomerUtils.viewInfoMenu();
+//                            Customer updateCustomer = UserUtils.updateCustomer(UserUtils.getCustomerByUsername(
+//                                    UserUtils.getCurrentUsername()).getCustomerID());
+//                            UserUtils.setCurrentUsername(updateCustomer.getUsername());
+//                            currentCustomer = (Customer) UserUtils.getCurrentUser();
+//                            printLoggedInPersonalInformationMenu();
+//                        } else {
+//                            hasRun1 = true;
+//                            System.out.println("You are not logged in yet!");
+//                        }
+//                        break;
+//                    case 2:
+//                        if (currentCustomer != null) {
+//                            hasRun1 = false;
+//                            System.out.println("Returning to Main Menu...");
+//                            printLoggedInMenu();
+//                        } else {
+//                            hasRun1 = true;
+//                            System.out.println("You are not logged in yet!");
+//                        }
+//                        break;
+//                    default:
+//                        hasRun1 = true;
+//                        System.out.println("Please enter one of the given number!");
+//                }
+//            } catch (InputMismatchException e) {
+//                System.out.println("Please enter a valid input!");
+//            }
+//        } while (Objects.equals(UserUtils.getCurrentUsername(), (currentCustomer != null ? currentCustomer.getUsername() : null)));
+//    }
 
 }

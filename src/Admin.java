@@ -34,4 +34,9 @@ public class Admin extends User{
             return true;
         }
     }
+
+    @Override
+    public String display() {
+        return null;
+    }
 }

@@ -68,5 +68,13 @@ public class Customer extends User{
         }
     }
 
+    // technical methods
+    @Override
+    public String display() {
+        return String.format("ID= %s, Username= %s, Password = %s, Fullname= %s, Phone= %s," +
+                        "Email= %s, Address= %s, Spending= %.2f, Membership= %s", getCustomerID(),
+                getUsername(), getPassword(), getFullName(), getPhone(), getEmail(),
+                getAddress(), getSpending(), getMembership());
+    }
 
 }

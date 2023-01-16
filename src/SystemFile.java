@@ -305,4 +305,15 @@ public class SystemFile {
             System.out.println("Cannot write to " + fileName + " data file!");
         }
     }
+
+    static void writeToFile(String filePath, String writeInfo) {
+        String fileName = filePath.substring(0, filePath.indexOf("."));
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter(filePath, false ));
+            pw.println(writeInfo);
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("Cannot write to " + fileName + " data file!");
+        }
+    }
 }

@@ -182,12 +182,12 @@ public class UserUtils {
     }
 
     public static void printCurrentUserInfo() {
-        if (currentUsername != null) {
+        if (getCurrentUsername() != null) {
             User currentUser = getCurrentUser();
             if (currentUser != null) {
-                System.out.println(currentUser.toString());
+                System.out.print(currentUser.display());
             } else {
-                System.out.println("You are not logged in yet!");
+                System.out.println("You are not logged in yet1!");
             }
         } else {
             System.out.println("You are not logged in yet!");
@@ -205,6 +205,7 @@ public class UserUtils {
         return null;
     }
 
+    // customer self register
     static void registerCustomer() {
         ArrayList<Customer> customers = SystemFile.viewCustomerList();
         Scanner scanner = new Scanner(System.in);
@@ -312,5 +313,153 @@ public class UserUtils {
 
         // append new Customer to file
         SystemFile.appendToFile("data/customers.txt", newCustomer.toString());
+    }
+
+    // customer self update
+    static Customer updateCustomer(String updateCustomerID) {
+        ArrayList<Customer> customers = SystemFile.viewCustomerList();
+        Customer updateCustomer = viewCustomerByID(updateCustomerID);
+
+        int position = 0;
+        for (Customer customer : customers) {
+            if (Objects.equals(updateCustomer.getCustomerID(), customer.getCustomerID())) {
+                break;
+            }
+            position++;
+        }
+
+        System.out.println(customers);
+        System.out.println("ok");
+        System.out.println(updateCustomer);
+
+        Scanner scanner = new Scanner(System.in);
+
+        String inputUsername = null;
+        boolean hasRun = false;
+        String message = null;
+        loop: do {
+            if (!hasRun) {
+                System.out.print("\n");
+                System.out.print("Enter your new username: ");
+                hasRun = true;
+            } else {
+                System.out.println(message);
+                System.out.print("\n");
+                System.out.print("Please re-enter your new username: ");
+            }
+            inputUsername = scanner.nextLine();
+
+            if (customers != null) {
+                for (Customer customer: customers) {
+                    if (Objects.equals(customer.getUsername(), inputUsername) &&
+                            (!Objects.equals(customer, updateCustomer))) {
+                        message = "This account name is taken!";
+                        inputUsername = null;
+                        continue loop;
+                    }
+                }
+            }
+
+            message = "Cannot leave the field empty!";
+        } while (inputUsername == null || inputUsername.isEmpty());
+
+        String inputPassword = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.print("Enter your new password: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your new password: ");
+            }
+
+            inputPassword = scanner.nextLine();
+        } while (inputPassword == null || inputPassword.isEmpty());
+
+        String inputFullName = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.print("Enter your full name: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your full name: ");
+            }
+
+            inputFullName = scanner.nextLine();
+        } while (inputFullName == null || inputFullName.isEmpty());
+
+        String inputPhone = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.print("Enter your phone number: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your phone number: ");
+            }
+
+            inputPhone = scanner.nextLine();
+        } while (inputPhone == null || inputPhone.isEmpty());
+
+        String inputEmail = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.print("Enter your email address: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your email address: ");
+            }
+
+            inputEmail = scanner.nextLine();
+        } while (inputEmail == null || inputEmail.isEmpty());
+
+        String inputAddress = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.print("Enter your address: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter your address: ");
+            }
+
+            inputAddress = scanner.nextLine();
+        } while (inputAddress == null || inputAddress.isEmpty());
+
+        System.out.println(position);
+
+        updateCustomer.setUsername(inputUsername);
+        updateCustomer.setPassword(inputPassword);
+        updateCustomer.setFullName(inputFullName);
+        updateCustomer.setPhone(inputPhone);
+        updateCustomer.setEmail(inputEmail);
+        updateCustomer.setAddress(inputAddress);
+
+
+        System.out.println(customers);
+        System.out.println("ok");
+        System.out.println(updateCustomer);
+
+        customers.set(position, updateCustomer);
+
+        // write all Customers to file with updated one
+        updateCustomerToFile(customers);
+
+        return  updateCustomer;
+    }
+
+    static void updateCustomerToFile(ArrayList<Customer> customers) {
+        boolean firstItem = true;
+        SystemFile.writeToFile("data/customers.txt", "#ID,Username,Password,Name,Phone,Email,Address,Spending,Membership");
+        for (Customer customer : customers) {
+            SystemFile.appendToFile("data/customers.txt", customer.toString());
+        }
     }
 }
