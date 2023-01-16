@@ -1,12 +1,12 @@
 import java.util.ArrayList;
 
 public class Order {
-    private String userID;
-    private String orderID;
-    private String productName;
-    private int productAmount;
-    private double productPrice;
-    private double orderPrice;
+    private final String userID;
+    private final String orderID;
+    private final String productName;
+    private final int productAmount;
+    private final double productPrice;
+    private final double orderPrice;
     private String paymentStatus;
     private String orderStatus;
 

@@ -1,46 +1,13 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.InvalidParameterException;
 import java.util.*;
 
 public class ProductUtils {
     //Category utilities
-    static ArrayList<Category> viewCategoryList() {
-        try {
-            Scanner fileScanner = new Scanner((new File("category.txt")));
-            ArrayList<Category> categoryList = new ArrayList<>();
-            String line;
-
-            while (fileScanner.hasNext()){
-                line = fileScanner.nextLine();
-                StringTokenizer inReader = new StringTokenizer(line, ",");
-
-                if (inReader.countTokens() != 2) {
-                    throw new IOException("Invalid Input Format");
-                } else {
-                    String fileCategoryID = inReader.nextToken();
-                    String fileCategoryName = inReader.nextToken();
-
-                    categoryList.add(new Category(fileCategoryID, fileCategoryName));
-                }
-            }
-
-            fileScanner.close();
-
-            return categoryList;
-
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
 
     static void viewCategoryByID(String id) {
-        ArrayList<Category> categories = ProductUtils.viewCategoryList();
+        ArrayList<Category> categories = SystemFile.viewCategoryList();
         ArrayList<Category> sortedCategories = new ArrayList<>();
 
         if (categories != null) {
@@ -60,7 +27,7 @@ public class ProductUtils {
     }
 
     static void viewCategoryByName(String name) {
-        ArrayList<Category> categories = ProductUtils.viewCategoryList();
+        ArrayList<Category> categories = SystemFile.viewCategoryList();
         ArrayList<Category> sortedCategories = new ArrayList<>();
 
         if (categories != null) {
@@ -80,49 +47,10 @@ public class ProductUtils {
     }
 
 
-
     //Product utilities
-    static ArrayList<Product> viewProductList() {
-        try {
-            Scanner fileScanner = new Scanner((new File("product.txt")));
-            ArrayList<Product> productsList = new ArrayList<Product>();
-
-            fileScanner.nextLine();
-
-            while (fileScanner.hasNext()) {
-                String line = fileScanner.nextLine();
-                StringTokenizer inReader = new StringTokenizer(line, ",");
-
-                if (inReader.countTokens() != 7) {
-                    throw new IOException("Invalid Input Format (product)");
-                } else {
-                    // get each string seperated by ","
-                    String productId = inReader.nextToken();
-                    String productName = inReader.nextToken();
-                    double productPrice = Double.parseDouble(inReader.nextToken());
-                    String productDesc = inReader.nextToken();
-                    int productSaleNumber = Integer.parseInt(inReader.nextToken());
-                    String productCategoryId= inReader.nextToken();
-                    String productCategoryName = inReader.nextToken();
-
-                    // add customers from txt into list
-                    productsList.add(new Product(productId, productName, productPrice, productDesc, productSaleNumber, productCategoryId, productCategoryName));
-                }
-            }
-
-            fileScanner.close();
-
-            return productsList;
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
 
     static void viewProductByID(String id) {
-        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> products = SystemFile.viewProductList();
         ArrayList<Product> sortedProducts = new ArrayList<>();
         if (products != null) {
             for (Product product: products) {
@@ -141,7 +69,7 @@ public class ProductUtils {
     }
 
     static void viewProductByName(String name) {
-        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> products = SystemFile.viewProductList();
         ArrayList<Product> sortedProducts = new ArrayList<>();
 
         if (products != null) {
@@ -161,7 +89,7 @@ public class ProductUtils {
     }
 
     static void viewProductByCategory(String categoryName) {
-        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> products = SystemFile.viewProductList();
         ArrayList<Product> sortedProducts = new ArrayList<>();
 
         if (products != null) {
@@ -181,7 +109,7 @@ public class ProductUtils {
     }
 
     static void sortProductByPriceRange(double min, double max) {
-        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> products = SystemFile.viewProductList();
         ArrayList<Product> sortedProducts = new ArrayList<>();
 
         if (products != null) {
@@ -206,7 +134,7 @@ public class ProductUtils {
     }
 
     static void sortAllProductByPriceAsc() {
-        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> products = SystemFile.viewProductList();
 
         if (products != null) {
             Collections.sort(products);
@@ -216,7 +144,7 @@ public class ProductUtils {
     }
 
     static void sortAllProductByPriceDes() {
-        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> products = SystemFile.viewProductList();
 
         if (products != null) {
             Collections.sort(products);
@@ -227,7 +155,7 @@ public class ProductUtils {
     }
 
     static void viewMostPopularProducts() {
-        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> products = SystemFile.viewProductList();
         ArrayList<Product> sortedProducts = new ArrayList<>();
 
         if (products != null) {
@@ -250,7 +178,7 @@ public class ProductUtils {
     }
 
     static void viewLeastPopularProducts() {
-        ArrayList<Product> products = ProductUtils.viewProductList();
+        ArrayList<Product> products = SystemFile.viewProductList();
         ArrayList<Product> sortedProducts = new ArrayList<>();
 
         if (products != null) {
@@ -277,7 +205,7 @@ public class ProductUtils {
 
     //This method will print a given arraylist of product
     static void printListOfProducts(ArrayList<Product> products) {
-        System.out.println("ID | Name | Price | Description | Category");
+        System.out.println("ID | Name | Price | Category");
         for (Product product: products) {
             System.out.println(product);
         }

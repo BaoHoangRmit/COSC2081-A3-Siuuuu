@@ -1,69 +1,7 @@
-import java.io.IOException;
-import java.util.*;
-
 public class Main {
 
     public static void main(String[] args) {
-        SystemFile.setCurrentUsername(null);
-        ArrayList<Customer> customers = SystemFile.getCustomerListFromFile();
-        ArrayList<String> customerIDs = SystemFile.getCustomerIDList();
-        HashMap<String, String> accounts = SystemFile.getCustomerAccountList();
-
-        System.out.println("#username,password,fullname,phone,email,address,customerID,spending,memebership");
-
-        if (customers != null) {
-            for (Customer customer : customers) {
-                System.out.println(customer.toString());
-            }
-        } else {
-            System.out.println("There are no customers data");
-        }
-
-        if (customerIDs != null) {
-            for (String s : customerIDs) {
-                System.out.println(s);
-            }
-        } else {
-            System.out.println("There are no customers id");
-        }
-
-        if (accounts != null) {
-            for (String s : accounts.keySet()) {
-                System.out.println(s + " : " + accounts.get(s));
-            }
-        } else {
-            System.out.println("There are no customers account");
-        }
-
-
-//        System.out.println(Objects.requireNonNull(SystemFile.viewCustomerByID("C003")).toString());
-
-        System.out.println();
-        System.out.println("--------------------------");
-        System.out.println();
-
-
-
-//        System.out.println("The current username is: " + SystemFile.getCurrentUsername());
-//        Customer currentCustomer = SystemFile.viewCustomerByUsername(SystemFile.getCurrentUsername());
-//        if (currentCustomer != null) {
-//            System.out.println(currentCustomer.toString());
-//        } else {
-//            System.out.println("You are not logged in yet!");
-//        }
-
-//        System.out.println("Registering new Customer -------");
-//        SystemFile.registerCustomer();
-//        customers = SystemFile.getCustomerListFromFile();
-//        if (customers != null) {
-//            for (Customer customer : customers) {
-//                System.out.println(customer.toString());
-//            }
-//        } else {
-//            System.out.println("There are no customers data");
-//        }
-
-        System.out.println("----- WELCOME SCREEN -----");
+        System.out.println("\n----- WELCOME SCREEN -----");
         System.out.println("COSC2081 GROUP ASSIGNMENT\n" +
                 "STORE ORDER MANAGEMENT SYSTEM\n" +
                 "Instructor: Mr. Tom Huynh & Dr. Phong Ngo\n" +
@@ -76,11 +14,7 @@ public class Main {
 
         System.out.println();
 
-        SystemFile.printLoginMenu();
-        SystemFile.checkLoginMenuInput();
-
-
-
-
+        SystemUtils.printLoginMenu();
+        SystemUtils.checkLoginMenuInput();
     }
 }

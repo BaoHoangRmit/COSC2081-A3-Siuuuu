@@ -21,16 +21,16 @@ public class Admin extends User{
     @Override
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,%s,%s", getAdminID(),
-                getUsername(), getPassword(), getFullname(), getPhone(), getEmail(),
+                getUsername(), getPassword(), getFullName(), getPhone(), getEmail(),
                 getAddress());
     }
 
     @Override
     public boolean logout() {
-        if (Objects.equals(SystemFile.getCurrentUsername(), null)) {
+        if (Objects.equals(UserUtils.getCurrentUsername(), null)) {
             return false;
         } else {
-            SystemFile.setCurrentUsername(null);
+            UserUtils.setCurrentUsername(null);
             return true;
         }
     }
