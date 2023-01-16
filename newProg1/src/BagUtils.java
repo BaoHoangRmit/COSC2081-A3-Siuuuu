@@ -64,6 +64,8 @@ public class BagUtils {
                 System.out.println(String.format("%d. %s: Amount: %d, Price: %.4f", cnt, item.getProductName() ,item.getProductAmount(), item.getProductPrice()));
             }
 
+            System.out.print("\n");
+
             if(totalAmount == 1){
                 System.out.println("Total: " + totalAmount + " item.");
                 System.out.println(String.format("Total Price: %.4f", totalPrice));
@@ -144,5 +146,83 @@ public class BagUtils {
             }
         }
         return bags2;
+    }
+
+    static void announceBagChange(){
+        Customer curCus = UserUtils.viewCurrentCustomer();
+        ArrayList<Bag> curBags = viewBag();
+
+        ArrayList<Bag> removeBags = new ArrayList<>();
+        ArrayList<Bag> editBags = new ArrayList<>();
+
+        ArrayList<Bag> bagList = SystemFile.viewBagsList();
+        ArrayList<Product> proList = SystemFile.viewProductList();
+
+        boolean bagCheck;
+        int cnt = 0;
+
+        for(Bag bag : curBags){
+            bagCheck = true;
+            if (proList != null) {
+                for(Product pro : proList){
+                    if((bag.getProductID()).equalsIgnoreCase(pro.getProductID())){
+                        bagCheck = false;
+                        if( (pro.getProductPrice()) * (bag.getProductAmount()) != (bag.getProductPrice()) ){
+                            bag.setProductPrice( ((pro.getProductPrice()) * (bag.getProductAmount())) );
+                            cnt += 1;
+                            editBags.add(bag);
+                        }
+                    }
+                }
+                if(bagCheck){
+                    cnt += 1;
+                    removeBags.add(bag);
+                    editBags.add(bag);
+                }
+            }
+        }
+
+        if(cnt > 0){
+            System.out.print("\n");
+            System.out.println("----- Bag Update -----");
+            System.out.println("Bag is updated due to the change of product price or existence!");
+            System.out.println(cnt + " item(s) (changes) found in your Bag");
+            int i = 0;
+            for (Bag bag : editBags) {
+                i += 1;
+                System.out.println((i) + ". " + (bag.getProductID()) + " - " + (bag.getProductName()));
+                i++;
+
+            }
+
+            if(removeBags.size() > 0){
+                Bag tmp = null;
+                for (Bag bag : removeBags){
+                    if (bagList != null) {
+                        for(Bag bag2 : bagList){
+                            if( (bag2.getProductID()).equalsIgnoreCase(bag.getProductID()) && (bag2.getCustomerID()).equalsIgnoreCase(bag.getCustomerID()) ){
+                                tmp = bag2;
+                                break;
+                            }
+                        }
+                        bagList.remove(tmp);
+                    }
+
+                    for(Bag bag2 : curBags){
+                        if( (bag2.getProductID()).equalsIgnoreCase(bag.getProductID()) && (bag2.getCustomerID()).equalsIgnoreCase(bag.getCustomerID()) ){
+                            tmp = bag2;
+                            break;
+                        }
+                    }
+                    curBags.remove(tmp);
+                }
+            }
+
+            System.out.println("Please re-check your Bag!");
+            System.out.println("----------------------");
+
+            bagList = mergeBags(curBags, bagList);
+            updateBag(bagList);
+        }
     }
 }
