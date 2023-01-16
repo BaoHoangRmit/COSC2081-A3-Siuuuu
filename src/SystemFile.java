@@ -5,6 +5,7 @@ import java.util.*;
 
 public class SystemFile {
     private static String currentUsername;
+    private static String currentRole;
 
     // getter setter
     public static void setCurrentUsername(String currentUsername) {
@@ -15,12 +16,20 @@ public class SystemFile {
         return currentUsername;
     }
 
+    public static void setCurrentRole(String currentRole) {
+        SystemFile.currentRole = currentRole;
+    }
 
-    // menu function
+    public static String getCurrentRole() {
+        return currentRole;
+    }
+
+    // MAIN MENU function
     public static void printLoginMenu() {
         System.out.println("----- MENU SCREEN -----");
-        System.out.println("1: Login");
-        System.out.println("2: Exit Application");
+        System.out.println("1: Login as Customer");
+        System.out.println("2: Login as Admin");
+        System.out.println("3: Exit Application");
         System.out.println("Enter your number option: ");
     }
 
@@ -36,9 +45,9 @@ public class SystemFile {
                 int inputOption = scanner.nextInt();
                 switch (inputOption) {
                     case 1:
-                        if (login()) {
-                            printLoggedInMenu();
-                            checkLoggedInMenuInput();
+                        if (login("Customer")) {
+                            printCustomerLoggedInMenu();
+                            checkCustomerLoggedInMenuInput();
                             continue logInLoop;
                         } else {
                             printLoginMenu();
@@ -46,6 +55,16 @@ public class SystemFile {
                             continue logInLoop;
                         }
                     case 2:
+                        if (login("Admin")) {
+                            printAdminLoggedInMenu();
+                            checkAdminLoggedInMenuInput();
+                            continue logInLoop;
+                        } else {
+                            printLoginMenu();
+                            hasRun = false;
+                            continue logInLoop;
+                        }
+                    case 3:
                         System.exit(0);
                         break;
                     default:
@@ -59,7 +78,21 @@ public class SystemFile {
         } while (Objects.equals(SystemFile.getCurrentUsername(), null));
     }
 
-    public static void printLoggedInMenu() {
+    public static void printCurrentUserInfo() {
+        if (currentUsername != null) {
+            User currentUser = getCurrentUser();
+            if (currentUser != null) {
+                System.out.println(currentUser.toString());
+            } else {
+                System.out.println("You are not logged in yet!");
+            }
+        } else {
+            System.out.println("You are not logged in yet!");
+        }
+    }
+
+    // CUSTOMER MENU function
+    public static void printCustomerLoggedInMenu() {
         System.out.print("\n");
         System.out.println("----- CUSTOMER SCREEN -----");
         System.out.println("1: View personal information");
@@ -68,66 +101,136 @@ public class SystemFile {
         System.out.println("Enter your number option: ");
     }
 
-    public static void checkLoggedInMenuInput() {
-        Customer currentCustomer = SystemFile.viewCurrentCustomer();
-        boolean hasRun1 = false;
-        loggedInLoop: do {
-            if (hasRun1) {
-                System.out.println("Enter your number option again: ");
-            }
-
-            try {
-                Scanner scanner = new Scanner(System.in);
-                int inputOption = scanner.nextInt();
-                switch (inputOption) {
-                    case 1:
-                        printCurrentCustomer(currentCustomer);
-                        printLoggedInMenu();
-                        hasRun1 = false;
-                        continue loggedInLoop;
-
-                    case 2:
-                        if(currentCustomer != null){
-                            currentCustomer.addItem();
-                            printLoggedInMenu();
-                            hasRun1 = false;
-                            continue loggedInLoop;
-                        } else{
-                            System.out.println("You are not logged in yet!");
-                            printLoggedInMenu();
-                            break loggedInLoop;
-                        }
-
-                    case 3:
-                        if (currentCustomer != null) {
-                            currentCustomer.logout();
-                        } else {
-                            System.out.println("You are not logged in yet!");
-                        }
-                        printLoginMenu();
-                        break loggedInLoop;
-                    default:
-                        System.out.println("Please enter one of the given number!");
+    public static void checkCustomerLoggedInMenuInput() {
+        Customer currentCustomer = (Customer) SystemFile.getCurrentUser();
+        boolean hasRunCustomer = false;
+        loggedInCustomerLoop: do {
+            if (currentCustomer != null){
+                if (hasRunCustomer) {
+                    System.out.println("Enter your number option again: ");
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Please enter a valid input!");
-            }
 
-            hasRun1 = true;
+                try {
+                    Scanner scanner = new Scanner(System.in);
+                    int inputOption = scanner.nextInt();
+                    switch (inputOption) {
+                        case 1:
+                            printCurrentUserInfo();
+                            printCustomerLoggedInMenu();
+                            hasRunCustomer = false;
+                            continue loggedInCustomerLoop;
+
+                        case 2:
+                            currentCustomer.addItem();
+                            printCustomerLoggedInMenu();
+                            hasRunCustomer = false;
+                            continue loggedInCustomerLoop;
+                        case 3:
+                            if (currentCustomer.logout()) {
+                                System.out.println("Logout successfully!");
+                                printLoginMenu();
+                                break loggedInCustomerLoop;
+                            } else {
+                                System.out.println("Logout unsuccessfully!");
+                            }
+                        default:
+                            System.out.println("Please enter one of the given number!");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Please enter a valid input!");
+                }
+
+                hasRunCustomer = true;
+            } else {
+                System.out.println("You are not logged in yet!");
+                printCustomerLoggedInMenu();
+                break loggedInCustomerLoop;
+            }
         } while (Objects.equals(SystemFile.getCurrentUsername(), currentCustomer.getUsername()));
     }
 
-    public static void printCurrentCustomer(Customer currentCustomer) {
-        if (currentCustomer != null) {
-            System.out.println(currentCustomer.toString());
-        } else {
-            System.out.println("You are not logged in yet!");
-        }
+    // ADMIN MENU function
+    public static void printAdminLoggedInMenu() {
+        System.out.print("\n");
+        System.out.println("----- ADMIN SCREEN -----");
+        System.out.println("1: View personal information");
+        System.out.println("2: Logout");
+        System.out.println("Enter your number option: ");
+    }
+
+    public static void checkAdminLoggedInMenuInput() {
+        Admin currentAdmin = (Admin) SystemFile.getCurrentUser();
+        boolean hasRunAdmin = false;
+        loggedInAdminLoop: do {
+            if (currentAdmin != null){
+                if (hasRunAdmin) {
+                    System.out.println("Enter your number option again: ");
+                }
+
+                try {
+                    Scanner scanner = new Scanner(System.in);
+                    int inputOption = scanner.nextInt();
+                    switch (inputOption) {
+                        case 1:
+                            printCurrentUserInfo();
+                            printAdminLoggedInMenu();
+                            hasRunAdmin = false;
+                            continue loggedInAdminLoop;
+                        case 2:
+                            if (currentAdmin.logout()) {
+                                System.out.println("Logout successfully!");
+                                printLoginMenu();
+                                break loggedInAdminLoop;
+                            } else {
+                                System.out.println("Logout unsuccessfully!");
+                            }
+                        default:
+                            System.out.println("Please enter one of the given number!");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Please enter a valid input!");
+                }
+
+                hasRunAdmin = true;
+            } else {
+                System.out.println("You are not logged in yet!");
+                printCustomerLoggedInMenu();
+                break loggedInAdminLoop;
+            }
+        } while (Objects.equals(SystemFile.getCurrentUsername(), currentAdmin.getUsername()));
     }
 
     // technical function
-    static boolean login() {
-        HashMap<String, String> accounts = SystemFile.viewCustomerAccountList();
+    static User getCurrentUser() {
+        if (getCurrentUsername() != null) {
+            if (Objects.equals(getCurrentRole(), "Customer")) {
+                return getCustomerByUsername(getCurrentUsername());
+            } else if (Objects.equals(getCurrentRole(), "Admin")) {
+                return getAdminByUsername(getCurrentUsername());
+            }
+        }
+        return null;
+    }
+
+    static void appendToFile(String filePath, String writeInfo) {
+        String fileName = filePath.substring(0, filePath.indexOf("."));
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter(filePath, true ));
+            pw.println(writeInfo);
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("Cannot write to " + fileName + " data file!");
+        }
+    }
+
+    static boolean login(String role) {
+        HashMap<String, String> accounts = null;
+        if (Objects.equals(role, "Customer")) {
+            accounts = SystemFile.getCustomerAccountList();
+        } else if (Objects.equals(role, "Admin")) {
+            accounts = SystemFile.getAdminAccountList();
+        }
+
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter username: ");
@@ -141,6 +244,7 @@ public class SystemFile {
                     if (Objects.equals(inputPassword, accounts.get(s))) {
                         System.out.println("Login successfully!");
                         setCurrentUsername(s);
+                        setCurrentRole(role);
                         return true;
                     } else {
                         System.out.println("Wrong password!");
@@ -161,9 +265,10 @@ public class SystemFile {
         }
     }
 
-    // cannot validate in while loop yet
+    // CUSTOMER ---------------------------------------------------------------------------------------------------
+
     // care for pointer in file
-    static void createCustomer() {
+    static void registerCustomer() {
         Scanner scanner = new Scanner(System.in);
 
         String inputUsername = null;
@@ -178,7 +283,7 @@ public class SystemFile {
             }
 
             inputUsername = scanner.nextLine();
-        } while (Objects.equals(inputUsername, null));
+        } while (inputUsername == null || inputUsername.isEmpty());
 
         String inputPassword = null;
         hasRun = false;
@@ -192,7 +297,7 @@ public class SystemFile {
             }
 
             inputPassword = scanner.nextLine();
-        } while (Objects.equals(inputPassword, null));
+        } while (inputPassword == null || inputPassword.isEmpty());
 
         String inputFullName = null;
         hasRun = false;
@@ -206,7 +311,7 @@ public class SystemFile {
             }
 
             inputFullName = scanner.nextLine();
-        } while (Objects.equals(inputFullName, null));
+        } while (inputFullName == null || inputFullName.isEmpty());
 
         String inputPhone = null;
         hasRun = false;
@@ -220,7 +325,7 @@ public class SystemFile {
             }
 
             inputPhone = scanner.nextLine();
-        } while (Objects.equals(inputPhone, null));
+        } while (inputPhone == null || inputPhone.isEmpty());
 
         String inputEmail = null;
         hasRun = false;
@@ -234,7 +339,7 @@ public class SystemFile {
             }
 
             inputEmail = scanner.nextLine();
-        } while (Objects.equals(inputEmail, null));
+        } while (inputEmail == null || inputEmail.isEmpty());
 
         String inputAddress = null;
         hasRun = false;
@@ -248,24 +353,16 @@ public class SystemFile {
             }
 
             inputAddress = scanner.nextLine();
-        } while (Objects.equals(inputAddress, null));
+        } while (inputAddress == null || inputAddress.isEmpty());
 
         Customer newCustomer = new Customer(inputUsername.trim(), inputPassword.trim(),
                 inputFullName.trim(), inputPhone.trim(), inputEmail.trim(), inputAddress.trim());
 
         // append new Customer to file
-        try {
-            PrintWriter pw = new PrintWriter(new FileWriter("customersSiuuuu.txt", true ));
-            pw.println(String.format("%s,%s,%s,%s,%s,%s,%s,%.2f,%s", newCustomer.getCustomerID(), newCustomer.getUsername(), newCustomer.getPassword(),
-                    newCustomer.getFullname(), newCustomer.getPhone(), newCustomer.getEmail(), newCustomer.getAddress(),
-                    newCustomer.getSpending(), newCustomer.getMembership()));
-            pw.close();
-        } catch (IOException e) {
-            System.out.println("Cannot create a new account!");
-        }
+        appendToFile("customersSiuuuu.txt", newCustomer.toString());
     }
 
-    static ArrayList<Customer> viewCustomerList() {
+    static ArrayList<Customer> getCustomerListFromFile() {
         try {
             Scanner fileScanner = new Scanner((new File("customersSiuuuu.txt")));
             ArrayList<Customer> customersList = new ArrayList<Customer>();
@@ -310,8 +407,8 @@ public class SystemFile {
         return null;
     }
 
-    static ArrayList<String> viewCustomerIDList(){
-        ArrayList<Customer> customers = SystemFile.viewCustomerList();
+    static ArrayList<String> getCustomerIDList(){
+        ArrayList<Customer> customers = SystemFile.getCustomerListFromFile();
         ArrayList<String> customerIDs = new ArrayList<String>();
 
         if (customers != null) {
@@ -325,8 +422,8 @@ public class SystemFile {
         return customerIDs;
     }
 
-    static HashMap<String, String> viewCustomerAccountList() {
-        ArrayList<Customer> customers = SystemFile.viewCustomerList();
+    static HashMap<String, String> getCustomerAccountList() {
+        ArrayList<Customer> customers = SystemFile.getCustomerListFromFile();
         HashMap<String, String> accounts = new HashMap<String, String>();
 
         if (customers != null) {
@@ -340,8 +437,8 @@ public class SystemFile {
         return accounts;
     }
 
-    static Customer viewCustomerByID(String id) {
-        ArrayList<Customer> customers = SystemFile.viewCustomerList();
+    static Customer getCustomerByID(String id) {
+        ArrayList<Customer> customers = SystemFile.getCustomerListFromFile();
 
         if (customers != null) {
             for (Customer customer : customers) {
@@ -358,8 +455,8 @@ public class SystemFile {
         return null;
     }
 
-    static Customer viewCustomerByUsername(String username) {
-        ArrayList<Customer> customers = SystemFile.viewCustomerList();
+    static Customer getCustomerByUsername(String username) {
+        ArrayList<Customer> customers = SystemFile.getCustomerListFromFile();
 
         if (customers != null) {
             for (Customer customer : customers) {
@@ -374,14 +471,6 @@ public class SystemFile {
         }
 
         return null;
-    }
-
-    static Customer viewCurrentCustomer() {
-        if (getCurrentUsername() != null) {
-            return viewCustomerByUsername(getCurrentUsername());
-        } else {
-            return null;
-        }
     }
 
     static ArrayList<Product> viewProductList() {
@@ -458,6 +547,85 @@ public class SystemFile {
         }catch(NoSuchElementException e){
             return null;
         }
+        return null;
+    }
+
+
+
+    // ADMIN ---------------------------------------------------------------------------------------------------
+
+    static ArrayList<Admin> getAdminListFromFile() {
+        try {
+            Scanner fileScanner = new Scanner((new File("adminsSiuuuu.txt")));
+            ArrayList<Admin> adminsList = new ArrayList<Admin>();
+
+            fileScanner.nextLine();
+
+            while (fileScanner.hasNext()) {
+                String line = fileScanner.nextLine();
+                StringTokenizer inReader = new StringTokenizer(line, ",");
+
+                if (inReader.countTokens() != 7) {
+                    throw new IOException("Invalid Input Format");
+                } else {
+
+                    // get each string seperated by ","
+                    String fileAdminID = inReader.nextToken();
+                    String fileUsername = inReader.nextToken();
+                    String filePassword = inReader.nextToken();
+                    String fileFullname = inReader.nextToken();
+                    String filePhone = inReader.nextToken();
+                    String fileEmail = inReader.nextToken();
+                    String fileAddress = inReader.nextToken();
+
+                    // add customers from txt into list
+                    adminsList.add(new Admin(fileAdminID, fileUsername, filePassword,
+                            fileFullname, filePhone, fileEmail, fileAddress));
+                }
+            }
+
+            fileScanner.close();
+
+            return adminsList;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
+    static HashMap<String, String> getAdminAccountList() {
+        ArrayList<Admin> admins = SystemFile.getAdminListFromFile();
+        HashMap<String, String> accounts = new HashMap<String, String>();
+
+        if (admins != null) {
+            for (Admin admin : admins) {
+                accounts.put(admin.getUsername(), admin.getPassword());
+            }
+        } else {
+            return null;
+        }
+
+        return accounts;
+    }
+
+    static Admin getAdminByUsername(String username) {
+        ArrayList<Admin> admins = SystemFile.getAdminListFromFile();
+
+        if (admins != null) {
+            for (Admin admin : admins) {
+                if (Objects.equals(username, admin.getUsername())) {
+                    return admin;
+                } else {
+                    continue;
+                }
+            }
+        } else {
+            return null;
+        }
+
         return null;
     }
 }

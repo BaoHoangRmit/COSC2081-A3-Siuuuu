@@ -5,9 +5,9 @@ public class Main {
 
     public static void main(String[] args) {
         SystemFile.setCurrentUsername(null);
-        ArrayList<Customer> customers = SystemFile.viewCustomerList();
-        ArrayList<String> customerIDs = SystemFile.viewCustomerIDList();
-        HashMap<String, String> accounts = SystemFile.viewCustomerAccountList();
+        ArrayList<Customer> customers = SystemFile.getCustomerListFromFile();
+        ArrayList<String> customerIDs = SystemFile.getCustomerIDList();
+        HashMap<String, String> accounts = SystemFile.getCustomerAccountList();
 
         System.out.println("#username,password,fullname,phone,email,address,customerID,spending,memebership");
 
@@ -52,9 +52,9 @@ public class Main {
 //            System.out.println("You are not logged in yet!");
 //        }
 
-//        System.out.println("Creating new Customer -------");
-//        SystemFile.createCustomer();
-//        customers = SystemFile.viewCustomerList();
+//        System.out.println("Registering new Customer -------");
+//        SystemFile.registerCustomer();
+//        customers = SystemFile.getCustomerListFromFile();
 //        if (customers != null) {
 //            for (Customer customer : customers) {
 //                System.out.println(customer.toString());

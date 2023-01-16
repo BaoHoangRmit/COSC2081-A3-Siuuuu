@@ -54,14 +54,24 @@ public class Customer extends User{
 
     @Override
     public String toString() {
-        return String.format("%s, %s, %s, %s, %s, %s, %s, %.2f, %s", getCustomerID(),
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%.2f,%s", getCustomerID(),
                 getUsername(), getPassword(), getFullname(), getPhone(), getEmail(),
                 getAddress(), getSpending(), getMembership());
     }
 
+    @Override
+    public boolean logout() {
+        if (Objects.equals(SystemFile.getCurrentUsername(), null)) {
+            return false;
+        } else {
+            SystemFile.setCurrentUsername(null);
+            return true;
+        }
+    }
+
     // functional methods
     private String getContinuousID() {
-        ArrayList<String> customerIDs = SystemFile.viewCustomerIDList();
+        ArrayList<String> customerIDs = SystemFile.getCustomerIDList();
         String inputCustomerID;
         if (customerIDs != null) {
             int largestID = 0;
@@ -153,7 +163,8 @@ public class Customer extends User{
                         PrintWriter pw = new PrintWriter(new FileWriter("bag.txt", false));
                         pw.println("#customerID,ProductID,Amount,Price");
                         for(Bag bag : bagsList){
-                            pw.println(String.format("%s,%s,%d,%.2f", getCustomerID(), bag.getProductID(), bag.getProductAmount(), bag.getProductPrice()));
+                            pw.println(String.format("%s,%s,%d,%.2f", getCustomerID(), bag.getProductID(),
+                                    bag.getProductAmount(), bag.getProductPrice()));
                         }
                         pw.close();
                     }else if(userInputString.equalsIgnoreCase("n")){
@@ -191,17 +202,5 @@ public class Customer extends User{
         }while(addItemRun);
 
 
-    }
-
-    @Override
-    public boolean logout() {
-        if (Objects.equals(SystemFile.getCurrentUsername(), null)) {
-            System.out.println("Logout unsuccessfully!");
-            return false;
-        } else {
-            SystemFile.setCurrentUsername(null);
-            System.out.println("Logout successfully!");
-            return true;
-        }
     }
 }
