@@ -14,7 +14,7 @@
 */
 
 public class Order {
-    final String orderDate;
+    private final String orderDate;
     private final String userID;
     private final String orderID;
     private final String productName;
