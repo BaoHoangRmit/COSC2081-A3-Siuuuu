@@ -1,2 +1,4 @@
 #orderDate, customerId, orderId, productName, productAmount, productPrice, orderPrice, paymentStatus, orderStatus
 17/01/2023 12:08:21,C002,B1,Mouse1,3,62.9700,62.9700,Paid,Delivered
+17/01/2023 20:51:09,C003,B2,MacbookNew,2,36.0000,90036.0000,Unpaid,Delivering
+17/01/2023 20:51:09,C003,B2,Banana,10,90000.0000,90036.0000,Unpaid,Delivering

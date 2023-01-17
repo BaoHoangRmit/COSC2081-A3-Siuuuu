@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class SystemUtils {
     public static void printLoginMenu() {
@@ -76,9 +73,10 @@ public class SystemUtils {
         System.out.println("Store Revenue: " + storeRevenue + " VND");
         System.out.println("1: View personal information");
         System.out.println("2: Manage Products");
-        System.out.println("3: Categories");
+        System.out.println("3: View Categories");
         System.out.println("4: Manage Orders");
-        System.out.println("5: Logout");
+        System.out.println("5: View Customers List");
+        System.out.println("6: Logout");
         System.out.print("Enter your number option: ");
     }
 
@@ -98,7 +96,6 @@ public class SystemUtils {
                         case 1:
                             System.out.println("\n----- Personal Information -----");
                             UserUtils.printCurrentUserInfo();
-                            System.out.print("\n");
                             printAdminLoggedInMenu();
                             hasRunAdmin = false;
                             continue loggedInAdminLoop;
@@ -136,14 +133,16 @@ public class SystemUtils {
                                 for(String id : orderIds){
                                     genOrder = true;
                                     for(Order order : orderList){
-                                        if(genOrder){
-                                            System.out.println(cnt + ". " + id + "(OrderID):");
-                                            System.out.println("Customer: " + order.getUserID());
+                                        if(genOrder && id.equalsIgnoreCase(order.getOrderID())){
                                             tmp = order;
+                                            System.out.println(cnt + ". " + id + "(OrderID):");
+                                            System.out.println("Customer: " + tmp.getUserID());
+                                            cnt += 1;
                                             genOrder = false;
+                                            System.out.println("\nOrder Content:");
                                         }
                                         if(id.equalsIgnoreCase(order.getOrderID())){
-                                            System.out.println(String.format("%s, Amount: %d, Price: %.4f", order.getProductName(), order.getProductAmount(), order.getProductPrice()));
+                                            System.out.println(String.format("- %s, Amount: %d, Price: %.4f", order.getProductName(), order.getProductAmount(), order.getProductPrice()));
                                         }
                                     }
                                     double oPrice = tmp.getOrderPrice();
@@ -181,6 +180,30 @@ public class SystemUtils {
                             continue loggedInAdminLoop;
 
                         case 5:
+                            System.out.println("\n----- Customer List -----");
+                            HashMap<String, String> userList = SystemFile.getCustomerAccountList();
+                            if(userList == null){
+                                userList = new HashMap<>();
+                            }
+
+                            Customer printCus = null;
+                            int cnt = 1;
+
+                            for (String key: (userList.keySet())) {
+                                printCus = UserUtils.getCustomerByUsername(key);
+                                if (printCus != null) {
+                                    System.out.println(cnt + " " + printCus.display() + "\n");
+                                    cnt += 1;
+                                }
+
+                            }
+
+                            System.out.println("Returning to Menu...");
+                            printAdminLoggedInMenu();
+                            hasRunAdmin = false;
+                            continue loggedInAdminLoop;
+
+                        case 6:
                             if (currentAdmin.logout()) {
                                 System.out.println("Logout successfully!");
                                 printLoginMenu();

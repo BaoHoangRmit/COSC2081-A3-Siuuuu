@@ -3,7 +3,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class AdminUtils {
-    static void viewProductMenu(){
+    static void viewAdminProductMenu(){
         System.out.println("\n----- Product List -----");
 
         ArrayList<Product> proList = SystemFile.viewProductList();
@@ -106,7 +106,7 @@ public class AdminUtils {
             inputOption = scanner.nextInt();
 
             if(inputOption == 1){
-                CustomerUtils.viewProductMenu();
+                viewAdminProductMenu();
                 System.out.println("Returning to Menu...");
             } else if (inputOption == 2) {
                 ProductUtils.addNewFood();

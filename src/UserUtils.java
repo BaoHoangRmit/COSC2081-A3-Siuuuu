@@ -180,7 +180,7 @@ public class UserUtils {
         if (getCurrentUsername() != null) {
             User currentUser = getCurrentUser();
             if (currentUser != null) {
-                System.out.print(currentUser.display());
+                System.out.println(currentUser.display());
             } else {
                 System.out.println("You are not logged in yet1!");
             }
