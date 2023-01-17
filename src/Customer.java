@@ -1,3 +1,18 @@
+/*
+  RMIT University Vietnam
+  Course: COSC2081 Programming 1
+  Semester: 2022C
+  Assessment: Assignment 3 (Group Project)
+
+  Author & ID:
+  Hoang Quoc Bao s3926050
+  Nguyen Thien Co s3938338
+  Hoang Vinh Khue s3927474
+  Nguyen Dang Ha s3924594
+
+  Acknowledgement: None.
+*/
+
 import java.util.Objects;
 
 public class Customer extends User{

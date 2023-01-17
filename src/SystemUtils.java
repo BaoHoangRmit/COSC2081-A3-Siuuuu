@@ -1,3 +1,18 @@
+/*
+  RMIT University Vietnam
+  Course: COSC2081 Programming 1
+  Semester: 2022C
+  Assessment: Assignment 3 (Group Project)
+
+  Author & ID:
+  Hoang Quoc Bao s3926050
+  Nguyen Thien Co s3938338
+  Hoang Vinh Khue s3927474
+  Nguyen Dang Ha s3924594
+
+  Acknowledgement: None.
+*/
+
 import java.util.*;
 
 public class SystemUtils {
@@ -136,6 +151,7 @@ public class SystemUtils {
                                         if(genOrder && id.equalsIgnoreCase(order.getOrderID())){
                                             tmp = order;
                                             System.out.println(cnt + ". " + id + "(OrderID):");
+                                            System.out.println("Date: " + tmp.getOrderDate());
                                             System.out.println("Customer: " + tmp.getUserID());
                                             cnt += 1;
                                             genOrder = false;
@@ -155,7 +171,7 @@ public class SystemUtils {
                                 }
 
                                 System.out.println("Order Options:");
-                                System.out.println("1. Deliver All Order(s)");
+                                System.out.println("1. Deliver All Paid Order(s)");
                                 System.out.println("2. Return to Menu");
                                 String inputValue = "";
                                 System.out.print("Enter a number: ");
@@ -164,7 +180,9 @@ public class SystemUtils {
 
                                 if(inputValue.equalsIgnoreCase("1")){
                                     for(Order order : orderList){
-                                        order.setOrderStatus("Delivered");
+                                        if((order.getPaymentStatus()).equalsIgnoreCase("Paid")){
+                                            order.setOrderStatus("Delivered");
+                                        }
                                     }
                                     System.out.println("\n----- Orders Updated -----\n");
                                     SystemFile.updateOrder(orderList);

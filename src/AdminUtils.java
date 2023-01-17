@@ -1,3 +1,18 @@
+/*
+  RMIT University Vietnam
+  Course: COSC2081 Programming 1
+  Semester: 2022C
+  Assessment: Assignment 3 (Group Project)
+
+  Author & ID:
+  Hoang Quoc Bao s3926050
+  Nguyen Thien Co s3938338
+  Hoang Vinh Khue s3927474
+  Nguyen Dang Ha s3924594
+
+  Acknowledgement: None.
+*/
+
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -126,8 +141,9 @@ public class AdminUtils {
                 }
                 System.out.println("Returning to Menu...");
             } else if (inputOption == 4) {
+                Scanner scanner3 = new Scanner(System.in);
                 System.out.print("Please enter the product ID/Name to remove: ");
-                String userInput = scanner.nextLine();
+                String userInput = scanner3.nextLine();
                 ArrayList<Product> proList = SystemFile.viewProductList();
                 Product tmp = null;
                 if(proList != null){
@@ -138,7 +154,14 @@ public class AdminUtils {
                     }
                     proList.remove(tmp);
                     SystemFile.updateProductByRenew(proList);
-                    System.out.println("\n----- Item Removed -----\n");
+                    if (tmp == null){
+                        System.out.println("Item Not Found");
+                        System.out.println("Return to Menu...");
+                    }else{
+                        System.out.println("Return to Menu...");
+                        System.out.println("\n----- Item Removed -----");
+                    }
+
                 }
             } else if (inputOption == 5) {
                 System.out.println("Returning to Menu...");

@@ -1,5 +1,4 @@
 #productId,productName,Price,ProductDesc,ProductSaleNumber,CatId,CatName
-P111,MacbookNew,18.0000,This is a macbook,0,1,Electronics
 P112,iphone7,29.9800,This is a expensive phone,0,2,Electronics
 P113,Mouse1,20.9900,This mouse is made for gaming,3,4,Electronics
 P114,Headphone1,5.9900,This is a great headphone,0,6,Electronics
