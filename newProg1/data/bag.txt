@@ -1,4 +1,0 @@
-#customerID,ProductID,ProductName,Amount,Price
-C002,1111,Macbook1,18,179.8200
-C003,1112,iPhone2,3,59.9700
-C002,1113,Mouse1,4,156.8400

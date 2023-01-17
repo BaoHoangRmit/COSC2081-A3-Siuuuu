@@ -1,5 +1,0 @@
-#ID,Username,Password,Name,Phone,Email,Address
-A001,admin1,adminPassword1,Admin 1,111-111-111,1@admin.com,admin address 1
-A002,admin2,adminPassword2,Admin 2,222-222-222,2@admin.com,admin address 2
-A003,admin3,adminPassword3,Admin 3,333-333-333,3@admin.com,admin address 3
-A004,admin4,adminPassword4,Admin 4,444-444-444,4@admin.com,admin address 4
