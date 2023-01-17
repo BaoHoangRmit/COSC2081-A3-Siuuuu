@@ -328,10 +328,6 @@ public class UserUtils {
             position++;
         }
 
-        System.out.println(customers);
-        System.out.println("ok");
-        System.out.println(updateCustomer);
-
         Scanner scanner = new Scanner(System.in);
 
         String inputUsername = null;
@@ -441,11 +437,6 @@ public class UserUtils {
         updateCustomer.setPhone(inputPhone);
         updateCustomer.setEmail(inputEmail);
         updateCustomer.setAddress(inputAddress);
-
-
-        System.out.println(customers);
-        System.out.println("ok");
-        System.out.println(updateCustomer);
 
         customers.set(position, updateCustomer);
 

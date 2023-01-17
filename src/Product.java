@@ -19,6 +19,15 @@ public class Product extends Category implements Comparable<Product>{
         this.saleNumber = saleNumber;
     }
 
+    public Product(String productName, double productPrice, String productDesc, String categoryID, String categoryName) {
+        super(categoryID, categoryName);
+        this.productID = ProductUtils.getContinuousProductID();
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.productDesc = productDesc;
+        this.saleNumber = 0;
+    }
+
     public String getProductID() {
         return productID;
     }
@@ -72,5 +81,12 @@ public class Product extends Category implements Comparable<Product>{
             return 1;
         else
             return -1;
+    }
+
+    // display
+    public String displayProduct() {
+        return String.format("%s,%s,%.2f,%s,%d,%s,%s", getProductID(),
+                getProductName(), getProductPrice(), getProductDesc(), getSaleNumber(), getCategoryID(),
+                getCategoryName());
     }
 }
