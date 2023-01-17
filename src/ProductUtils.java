@@ -1,6 +1,3 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 
 public class ProductUtils {
@@ -264,6 +261,8 @@ public class ProductUtils {
     }
 
     static void addNewFood() {
+        System.out.print("\n");
+        System.out.println("----- Add New Product ------");
         ArrayList<Product> products = SystemFile.viewProductList();
         Scanner scanner = new Scanner(System.in);
 
@@ -273,7 +272,6 @@ public class ProductUtils {
         loop:
         do {
             if (!hasRun) {
-                System.out.print("\n");
                 System.out.print("Enter the food's name: ");
                 hasRun = true;
             } else {
@@ -374,7 +372,6 @@ public class ProductUtils {
         String message = null;
         loop: do {
             if (!hasRun) {
-                System.out.print("\n");
                 System.out.print("Enter your new product name: ");
                 hasRun = true;
             } else {
@@ -446,13 +443,13 @@ public class ProductUtils {
 
         String inputFoodCategoryName = getCategoryByID(inputFoodCategoryID).getCategoryName();
 
-        System.out.println(position);
-
         updateProduct.setProductName(inputProductName);
         updateProduct.setProductPrice(inputFoodPrice);
         updateProduct.setProductDesc(inputFoodDesc);
         updateProduct.setCategoryID(inputFoodCategoryID);
         updateProduct.setCategoryName(inputFoodCategoryName);
+
+
 
         products.set(position, updateProduct);
 

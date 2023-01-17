@@ -117,8 +117,6 @@ public class UserUtils {
             for (Admin admin : admins) {
                 if (Objects.equals(username, admin.getUsername())) {
                     return admin;
-                } else {
-                    continue;
                 }
             }
         } else {
@@ -162,7 +160,6 @@ public class UserUtils {
                     } else {
                         System.out.println("Wrong password!");
                         System.out.println("Login again!");
-                        System.out.println("\n");
                         return false;
                     }
                 } else {

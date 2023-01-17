@@ -37,6 +37,9 @@ public class Admin extends User{
 
     @Override
     public String display() {
-        return null;
+        return String.format("ID= %s, Username= %s, Password = %s: \nfullName= %s,\nPhone= %s," +
+                        "\nEmail= %s,\nAddress= %s", getAdminID(),
+                getUsername(), getPassword(), getFullName(), getPhone(), getEmail(),
+                getAddress());
     }
 }

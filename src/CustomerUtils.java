@@ -395,6 +395,7 @@ public class CustomerUtils {
                 }
             }
             else{
+                productMenuRun = false;
                 System.out.println("0 Product Found!");
             }
         }while(productMenuRun);
