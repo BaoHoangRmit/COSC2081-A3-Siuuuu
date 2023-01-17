@@ -116,6 +116,21 @@ public class ProductUtils {
         }
     }
 
+    static Product getProductByName(String name) {
+        ArrayList<Product> products = SystemFile.viewProductList();
+        ArrayList<Product> sortedProducts = new ArrayList<>();
+
+        if (products != null) {
+            for (Product product: products) {
+                if (name.equalsIgnoreCase(product.getProductName())) {
+                    return product;
+                }
+            }
+
+        }
+        return null;
+    }
+
     static void viewProductByCategory(String categoryName) {
         ArrayList<Product> products = SystemFile.viewProductList();
         ArrayList<Product> sortedProducts = new ArrayList<>();
@@ -340,6 +355,113 @@ public class ProductUtils {
 
     }
 
+    static Product updateProduct(String updateProductID) {
+        ArrayList<Product> products = SystemFile.viewProductList();
+        Product updateProduct = getProductByID(updateProductID);
+
+        int position = 0;
+        for (Product product : products) {
+            if (Objects.equals(updateProduct.getProductID(), product.getProductID())) {
+                break;
+            }
+            position++;
+        }
+
+        Scanner scanner = new Scanner(System.in);
+
+        String inputProductName = null;
+        boolean hasRun = false;
+        String message = null;
+        loop: do {
+            if (!hasRun) {
+                System.out.print("\n");
+                System.out.print("Enter your new product name: ");
+                hasRun = true;
+            } else {
+                System.out.println(message);
+                System.out.print("\n");
+                System.out.print("Please re-enter your new username: ");
+            }
+            inputProductName = scanner.nextLine();
+
+            if (products != null) {
+                for (Product product: products) {
+                    if (Objects.equals(product.getProductName(), inputProductName) &&
+                            (!Objects.equals(product.getProductID(), updateProduct.getProductID()))) {
+                        message = "This product name is taken!";
+                        inputProductName = null;
+                        continue loop;
+                    }
+                }
+            }
+
+            message = "Cannot leave the field empty!";
+        } while (inputProductName == null || inputProductName.isEmpty());
+
+        double inputFoodPrice = 0;
+        hasRun = false;
+        String checkPrice;
+        do {
+            if (!hasRun) {
+                System.out.print("Enter the product's price: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter the product's price: ");
+            }
+
+            checkPrice = scanner.nextLine();
+            inputFoodPrice = Double.parseDouble(checkPrice);
+        } while (inputFoodPrice == 0 || checkPrice.isEmpty());
+
+        String inputFoodDesc = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.print("Enter product's description: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter product's description: ");
+            }
+
+            inputFoodDesc = scanner.nextLine();
+        } while (inputFoodDesc == null || inputFoodDesc.isEmpty());
+
+
+        printListOfCategories(SystemFile.viewCategoryList());
+        String inputFoodCategoryID = null;
+        hasRun = false;
+        do {
+            if (!hasRun) {
+                System.out.print("Enter the product's category id: ");
+                hasRun = true;
+            } else {
+                System.out.println("Cannot leave this field empty!");
+                System.out.println("Please re-enter the product's category id: ");
+            }
+
+            inputFoodCategoryID = scanner.nextLine();
+        } while (inputFoodCategoryID == null || inputFoodCategoryID.isEmpty());
+
+        String inputFoodCategoryName = getCategoryByID(inputFoodCategoryID).getCategoryName();
+
+        System.out.println(position);
+
+        updateProduct.setProductName(inputProductName);
+        updateProduct.setProductPrice(inputFoodPrice);
+        updateProduct.setProductDesc(inputFoodDesc);
+        updateProduct.setCategoryID(inputFoodCategoryID);
+        updateProduct.setCategoryName(inputFoodCategoryName);
+
+        products.set(position, updateProduct);
+
+        // write all Customers to file with updated one
+        updateProductToFile(products);
+
+        return  updateProduct;
+    }
+
     static String getContinuousProductID() {
         ArrayList<String> productIDs = viewProductIDList();
         String inputCustomerID;
@@ -377,5 +499,12 @@ public class ProductUtils {
         }
 
         return productIDs;
+    }
+
+    static void updateProductToFile(ArrayList<Product> products) {
+        SystemFile.writeToFile("data/product.txt", "#productId,productName,Price,ProductDesc,ProductSaleNumber,CatId,CatName");
+        for (Product product : products) {
+            SystemFile.appendToFile("data/product.txt", product.displayProduct());
+        }
     }
 }
