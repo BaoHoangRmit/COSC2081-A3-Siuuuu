@@ -1,5 +1,5 @@
 #productId,productName,Price,ProductDesc,ProductSaleNumber,CatId,CatName
-P111,Macbook1,9.9900,This is cheap,0,1,Laptop
-P112,iPhone2,19.9900,This is expensive,0,2,Smartphone
-P113,Mouse1,20.9900,This mouse is made for gaming,3,4,Mouse
-P114,Headphone1,5.9900,This is a great headphone,0,6,Headphone
+P111,NAckbookNew,9.99,This is macbook,20,1,Laptop
+P112,iPhone2,19.99,This is expensive,30,2,Smartphone
+P113,Mouse1,20.99,This mouse is made for gaming,15,4,Mouse
+P114,Headphone1,5.99,This is a great headphone,30,6,Headphone

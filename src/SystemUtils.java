@@ -309,9 +309,29 @@ public class SystemUtils {
                             break;
                         case 2:
                             ProductUtils.addNewFood();
-
-
                             hasRunAdminManageProducts = false;
+                        case 3:
+                            if (currentAdmin != null) {
+                                Scanner smallScanner = new Scanner(System.in);
+                                System.out.print("Please enter the product ID you want to update: ");
+                                String inputDesireProductID = smallScanner.nextLine();
+
+                                if (ProductUtils.getProductByID(inputDesireProductID) == null) {
+                                    System.out.println("There are no product with the ID you entered!");
+                                } else {
+                                    Product product = ProductUtils.updateProduct(inputDesireProductID);
+
+                                    System.out.println("Updated Info: ");
+                                    product.displayProduct();
+                                }
+
+                                System.out.println("Returning to Menu...");
+                                printAdminLoggedInManageProductsMenu();
+                            } else {
+                                hasRunAdminManageProducts = true;
+                                System.out.println("You are not logged in yet!");
+                            }
+                            break;
                         case 5:
                             printAdminLoggedInMenu();
                         default:

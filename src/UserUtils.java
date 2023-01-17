@@ -427,8 +427,6 @@ public class UserUtils {
             inputAddress = scanner.nextLine();
         } while (inputAddress == null || inputAddress.isEmpty());
 
-        System.out.println(position);
-
         updateCustomer.setUsername(inputUsername);
         updateCustomer.setPassword(inputPassword);
         updateCustomer.setFullName(inputFullName);
