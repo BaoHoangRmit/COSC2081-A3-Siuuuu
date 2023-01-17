@@ -243,11 +243,12 @@ public class SystemFile {
                 String line = fileScanner.nextLine();
                 StringTokenizer inReader = new StringTokenizer(line, ",");
 
-                if (inReader.countTokens() != 8) {
+                if (inReader.countTokens() != 9) {
                     throw new IOException("Invalid Input Format (order)");
                 } else {
                     // get each string seperated by ","
 
+                    String orderDate = inReader.nextToken();
                     String customerId = inReader.nextToken();
                     String orderId = inReader.nextToken();
                     String productName = inReader.nextToken();
@@ -257,7 +258,7 @@ public class SystemFile {
                     String paymentStatus = inReader.nextToken();
                     String orderStatus = inReader.nextToken();
 
-                    ordersList.add(new Order(customerId, orderId, productName, productAmount, productPrice, orderPrice, paymentStatus, orderStatus));
+                    ordersList.add(new Order(orderDate, customerId, orderId, productName, productAmount, productPrice, orderPrice, paymentStatus, orderStatus));
                 }
             }
 
@@ -277,9 +278,10 @@ public class SystemFile {
     static void updateOrder(ArrayList<Order> ordersList) {
         try {
             PrintWriter pw = new PrintWriter(new FileWriter("data/order.txt", false));
-            pw.println("#customerId, orderId, productName, productAmount, productPrice, orderPrice, paymentStatus, orderStatus");
+            pw.println("#orderDate, customerId, orderId, productName, productAmount, productPrice, orderPrice, paymentStatus, orderStatus");
             for (Order order : ordersList) {
-                pw.println(String.format("%s,%s,%s,%d,%.4f,%.4f,%s,%s",
+                pw.println(String.format("%s,%s,%s,%s,%d,%.4f,%.4f,%s,%s",
+                        order.getOrderDate(),
                         order.getUserID(),
                         order.getOrderID(),
                         order.getProductName(),
@@ -292,6 +294,26 @@ public class SystemFile {
             pw.close();
         } catch (IOException e) {
             System.out.println("An error occurred (updateOrder)!");
+        }
+    }
+
+    static void updateProductByRenew(ArrayList<Product> proList) {
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter("data/product.txt", false));
+            pw.println("#productId,productName,Price,ProductDesc,ProductSaleNumber,CatId,CatName");
+            for (Product pro : proList) {
+                pw.println(String.format("%s,%s,%.4f,%s,%d,%s,%s",
+                        pro.getProductID(),
+                        pro.getProductName(),
+                        pro.getProductPrice(),
+                        pro.getProductDesc(),
+                        pro.getSaleNumber(),
+                        pro.getCategoryID(),
+                        pro.getCategoryName()));
+            }
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred (updateProductRenew)!");
         }
     }
 

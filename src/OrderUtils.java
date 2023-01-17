@@ -11,7 +11,6 @@ public class OrderUtils {
         } else {
             for (Order orders : ordersList) {
                 numOrderId = Integer.parseInt((orders.getOrderID()).substring(1));
-                orderId = String.format("B%d", numOrderId);
             }
             numOrderId += 1;
             orderId = String.format("B%d", numOrderId);
@@ -65,13 +64,19 @@ public class OrderUtils {
                 int orderCnt = 1;
                 String pStatus = "";
                 String oStatus = "";
+                boolean printDate = true;
                 System.out.println(ordersId.size() + " Bill(s) Found!");
                 for (String orderId : ordersId) {
                     System.out.print("\n");
                     System.out.println(orderCnt + "." + orderId + ":");
                     orderCnt += 1;
+                    printDate = true;
                     for (Order orders : ordersList) {
                         if ((orders.getOrderID()).equalsIgnoreCase(orderId)) {
+                            if(printDate){
+                                System.out.println("Date: " + orders.getOrderDate());
+                                printDate = false;
+                            }
                             oPrice = orders.getOrderPrice();
                             pStatus = orders.getPaymentStatus();
                             oStatus = orders.getOrderStatus();

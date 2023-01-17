@@ -1,8 +1,10 @@
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.Date;
 
 public class CustomerUtils {
     static void addItem(){
@@ -284,7 +286,12 @@ public class CustomerUtils {
                         if (ordersList == null) {
                             ordersList = new ArrayList<>();
                         }
-                        ordersList.add(new Order(bag.getCustomerID(), orderId, bag.getProductName(), bag.getProductAmount(), bag.getProductPrice(), BagUtils.getBagTotal()));
+
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                        Date date = new Date();
+                        String orderDate = formatter.format(date);
+
+                        ordersList.add(new Order(orderDate, bag.getCustomerID(), orderId, bag.getProductName(), bag.getProductAmount(), bag.getProductPrice(), BagUtils.getBagTotal()));
 
                         if (bagsList != null) {
                             for (Bag bag2 : bagsList) {

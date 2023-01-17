@@ -1,6 +1,3 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 
 public class UserUtils {
@@ -165,6 +162,7 @@ public class UserUtils {
                     } else {
                         System.out.println("Wrong password!");
                         System.out.println("Login again!");
+                        System.out.println("\n");
                         return false;
                     }
                 } else {
@@ -336,19 +334,19 @@ public class UserUtils {
         loop: do {
             if (!hasRun) {
                 System.out.print("\n");
-                System.out.print("Enter your new username: ");
+                System.out.print("Enter your desired username: ");
                 hasRun = true;
             } else {
                 System.out.println(message);
                 System.out.print("\n");
-                System.out.print("Please re-enter your new username: ");
+                System.out.print("Please re-enter the username: ");
             }
             inputUsername = scanner.nextLine();
 
             if (customers != null) {
                 for (Customer customer: customers) {
                     if (Objects.equals(customer.getUsername(), inputUsername) &&
-                            (!Objects.equals(customer, updateCustomer))) {
+                            (!Objects.equals(customer.getCustomerID(), updateCustomer.getCustomerID()))) {
                         message = "This account name is taken!";
                         inputUsername = null;
                         continue loop;
@@ -363,11 +361,11 @@ public class UserUtils {
         hasRun = false;
         do {
             if (!hasRun) {
-                System.out.print("Enter your new password: ");
+                System.out.print("Enter your desired password: ");
                 hasRun = true;
             } else {
                 System.out.println("Cannot leave this field empty!");
-                System.out.println("Please re-enter your new password: ");
+                System.out.println("Please re-enter the password: ");
             }
 
             inputPassword = scanner.nextLine();

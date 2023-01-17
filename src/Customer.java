@@ -71,8 +71,8 @@ public class Customer extends User{
     // technical methods
     @Override
     public String display() {
-        return String.format("ID= %s, Username= %s, Password = %s, Fullname= %s, Phone= %s," +
-                        "Email= %s, Address= %s, Spending= %.2f, Membership= %s", getCustomerID(),
+        return String.format("ID= %s, Username= %s, Password = %s: \nfullName= %s,\nPhone= %s," +
+                        "\nEmail= %s,\nAddress= %s,\nSpending= %.4f,\nMembership= %s", getCustomerID(),
                 getUsername(), getPassword(), getFullName(), getPhone(), getEmail(),
                 getAddress(), getSpending(), getMembership());
     }

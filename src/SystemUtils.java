@@ -1,10 +1,10 @@
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class SystemUtils {
     public static void printLoginMenu() {
-        System.out.println("\n");
         System.out.println("----- MENU SCREEN -----");
         System.out.println("1: Login as Customer");
         System.out.println("2: Signup as Customer");
@@ -16,7 +16,6 @@ public class SystemUtils {
         boolean hasRun = false;
         logInLoop: do {
             if (hasRun) {
-                System.out.print("\n");
                 System.out.print("Enter your number option again: ");
             }else{
                 System.out.print("Enter your number option: ");
@@ -70,8 +69,10 @@ public class SystemUtils {
     }
 
     public static void printAdminLoggedInMenu() {
+        double storeRevenue = updateSaleNumber();
         System.out.print("\n");
         System.out.println("----- ADMIN SCREEN -----");
+        System.out.println("Store Revenue: " + storeRevenue + " VND");
         System.out.println("1: View personal information");
         System.out.println("2: Manage Products");
         System.out.println("3: Manage Categories");
@@ -79,7 +80,7 @@ public class SystemUtils {
         System.out.println("5: Manage Customers");
         System.out.println("6: View Statistics");
         System.out.println("7: Logout");
-        System.out.println("Enter your number option: ");
+        System.out.print("Enter your number option: ");
     }
 
     public static void checkAdminLoggedInMenuInput() {
@@ -131,6 +132,7 @@ public class SystemUtils {
     // technical function
     public static void printLoggedInMenu() {
         BagUtils.announceBagChange();
+        updateSaleNumber();
         CustomerUtils.updateSpending();
         Customer curCus = UserUtils.viewCurrentCustomer();
 
@@ -326,5 +328,40 @@ public class SystemUtils {
                 break loggedInAdminLoop;
             }
         } while (Objects.equals(UserUtils.getCurrentUsername(), currentAdmin.getUsername()));
+    }
+
+    public static double updateSaleNumber(){
+        ArrayList<Order> orderList = SystemFile.viewOrdersList();
+        ArrayList<Product> proList = SystemFile.viewProductList();
+
+        if(orderList == null){
+            orderList = new ArrayList<>();
+        }
+        if (proList == null){
+            proList = new ArrayList<>();
+        }
+
+        int sale;
+        double revenue = 0;
+
+        for(Product pro : proList){
+            sale = 0;
+            for(Order order : orderList){
+                if( ((order.getProductName()).equalsIgnoreCase(pro.getProductName())) && ((order.getPaymentStatus()).equalsIgnoreCase("Paid")) ){
+                    sale += order.getProductAmount();
+                }
+            }
+
+            pro.setSaleNumber(sale);
+        }
+
+        for(Order order : orderList){
+            if( (order.getPaymentStatus()).equalsIgnoreCase("Paid") ){
+                revenue += order.getOrderPrice();
+            }
+        }
+
+        SystemFile.updateProductByRenew(proList);
+        return revenue;
     }
 }

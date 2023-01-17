@@ -1,6 +1,5 @@
-import java.util.ArrayList;
-
 public class Order {
+    final String orderDate;
     private final String userID;
     private final String orderID;
     private final String productName;
@@ -10,7 +9,9 @@ public class Order {
     private String paymentStatus;
     private String orderStatus;
 
-    public Order(String userID, String orderID, String productName, int productAmount, double productPrice, double orderPrice) {
+
+    public Order(String orderDate, String userID, String orderID, String productName, int productAmount, double productPrice, double orderPrice) {
+        this.orderDate = orderDate;
         this.userID = userID;
         this.orderID = orderID;
         this.productName = productName;
@@ -21,7 +22,8 @@ public class Order {
         this.orderStatus = "Delivering";
     }
 
-    public Order(String userID, String orderID, String productName, int productAmount, double productPrice, double orderPrice, String paymentStatus, String orderStatus) {
+    public Order(String orderDate, String userID, String orderID, String productName, int productAmount, double productPrice, double orderPrice, String paymentStatus, String orderStatus) {
+        this.orderDate = orderDate;
         this.userID = userID;
         this.orderID = orderID;
         this.productName = productName;
@@ -30,6 +32,10 @@ public class Order {
         this.orderPrice = orderPrice;
         this.paymentStatus = paymentStatus;
         this.orderStatus = orderStatus;
+    }
+
+    public String getOrderDate() {
+        return orderDate;
     }
 
     public String getUserID() {
